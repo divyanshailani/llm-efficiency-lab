@@ -1,33 +1,31 @@
-# Edge LLM Efficiency Lab
+# LLM Efficiency Lab
 
-A reproducible benchmark framework mapping the mathematical breaking points of quantized small LLMs (1B - 9B) on highly constrained edge devices.
+Finding the best quality, memory, and speed trade-offs for quantized LLMs across Apple Silicon and Hosted GPUs, followed by selective mobile validation.
 
-## Purpose
-This repository is strictly designed to measure the absolute intelligence floor of edge deployments. It generates real-world Pareto maps for GGUF-quantized small LLMs on physical mobile/edge hardware, with honest measurements for:
-*   **Memory Saturation:** Physical RSS footprint.
-*   **Latency:** Exact Time-To-First-Token (TTFT).
-*   **Throughput:** Decode Tokens-Per-Second (TPS) and Long Prefill speeds.
-*   **Degradation:** Mapping the logic collapse of models below 3-bit quantization (e.g. `Q2_K`).
+## Architecture & Tiers
 
-## Architecture
+We use a strict 3-tier testing pipeline to evaluate models (like Qwen 3B, 7B, 9B) before they ever touch an edge device.
 
-*   `telemetry/`: The core profiling engine for capturing honest hardware metrics.
-*   `experiments/`: Custom hypothesis scripts (e.g., GGUF quantization scaling).
-*   `pareto_maps/`: Output data charting Quality vs. Speed vs. RAM.
-*   `docs/`: Theory, architecture notes, and deployment playbook.
+### Tier 1: Local Apple Silicon
+Our controlled research baseline, utilizing the massive memory bandwidth of Apple Silicon (Unified Memory) to measure raw prompt processing (TTFT) and decode speeds.
+* **`llama.cpp` + Metal:** The GGUF standard baseline.
+* **`mlx-lm`:** Clean MLX-native single-request benchmarks.
+* **`oMLX`:** Serving overhead, persistent KV caching, concurrency, and SSD-cache experiments.
 
-## Setup & Requirements
+### Tier 2: Hosted GPU Validation
+For workloads that exceed local memory constraints, we leverage hosted NVIDIA infrastructure to stress-test scaling limits.
+* **Experiments:** TurboQuant implementations, aggressive KV-Cache quantization, large batch size stress tests, and long-context scaling (4K, 8K, 16K, 32K, and conditionally 128K).
 
-**Environment:**
-*   Python 3.11+
-*   `llama-cpp-python` (Built with native compiler constraints, see docs for Android Bionic `spawn.h` workaround).
+### Tier 3: Selective Android Validation
+Once the optimal configurations are mapped on Tiers 1 and 2, we selectively deploy the strongest candidates to constrained physical edge devices (e.g., 6GB RAM Android phones) to validate real-world feasibility.
 
-**Run an Experiment:**
-```bash
-python experiments/02_termux_native/02_termux_native_benchmark.py --threads 4
-```
+## Repository Structure
 
-*Note on ARM Threading:* Sweep thread counts because big.LITTLE CPUs may perform best below total core count.
+* `telemetry/`: Core profiling engine for capturing hardware metrics.
+* `experiments/`: Targeted hypothesis scripts spanning the three tiers.
+* `results/`: Output telemetry, benchmarks, and JSON data.
+* `docs/`: Theory and deployment documentation.
 
 ## Milestones
-*   **Milestone 1:** Qwen2.5 3B quantization and thread-scaling on Samsung Galaxy F23 5G.
+* **Phase 1 (Complete):** Established edge constraints (Context cliff and KV memory scaling) on Samsung Galaxy F23 5G via native `llama-bench`.
+* **Phase 2 (Active):** Local Apple Silicon baseline tests on Qwen 3B across `llama.cpp` and `MLX` runtimes.
