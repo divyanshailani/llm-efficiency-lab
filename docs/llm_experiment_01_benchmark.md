@@ -111,3 +111,20 @@ Even if the cache was fully saturated at 4096 tokens, it would only cost `~144 M
 
 ### Finding 2: Lazy Loading vs zRAM Panic
 The chaotic fluctuations in Resident Set Size (RSS) during the sweep (e.g., memory dropping from 3083 MB to 2724 MB as context increased) demonstrate the mechanics of `mmap` (memory-mapped) file loading. The OS only keeps memory pages resident as they are touched, actively paging them in and out. While Android's LMKD or zRAM compression may play a role, RSS drops alone are insufficient to prove zRAM activation without deeper kernel profiling (e.g., checking `/proc/swaps`).
+
+## 9. Native Context Saturation (Llama-Bench)
+To scientifically find the true context limits without Python's overhead, we compiled `llama.cpp` natively onto the Android Bionic kernel and executed the official C++ `llama-bench` tool. 
+
+By bypassing Python's `n_ctx` capacity abstraction and commanding `llama-bench` to actively prefill up to 3,800 tokens (`-p 3800 -n 128`), we forced the OS to physically ingest and store the maximum possible KV-cache payload.
+
+| Test Profile | Prompt Processing Speed | Generation Speed |
+| :--- | :--- | :--- |
+| **512 prefill + 128 decode** | 10.33 tok/s | 5.08 tok/s |
+| **2048 prefill + 128 decode** | 9.39 tok/s | 5.11 tok/s |
+| **3800 prefill + 128 decode** | 8.37 tok/s | 5.05 tok/s |
+
+### Finding 1: The Stability of GQA
+The generation speed remained rock solid (`~5.05 TPS`) even when the context window was stuffed with 3,800 tokens. This proves that traversing a Grouped Query Attention (GQA) KV cache during generation costs almost nothing in memory bandwidth on edge devices, since the physical size of the cache never exceeded ~144MB. 
+
+### Finding 2: The True Edge Bottleneck
+The actual bottleneck for edge context scaling is not memory capacity, but rather the memory bandwidth required for initial prompt ingestion. Pumping 3,800 tokens into the model dropped the prefill speed down to 8.37 tok/s, meaning a user would have to wait over **7.5 minutes** just for the model to "read" the prompt before generating the first word.
