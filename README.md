@@ -4,7 +4,7 @@ A reproducible benchmark framework mapping the mathematical breaking points of q
 
 ## Purpose
 This repository is strictly designed to measure the absolute intelligence floor of edge deployments. It generates real-world Pareto maps for GGUF-quantized small LLMs on physical mobile/edge hardware, with honest measurements for:
-*   **Memory Saturation:** Physical RSS footprint (bypassing Android zRAM quirks).
+*   **Memory Saturation:** Physical RSS footprint.
 *   **Latency:** Exact Time-To-First-Token (TTFT).
 *   **Throughput:** Decode Tokens-Per-Second (TPS) and Long Prefill speeds.
 *   **Degradation:** Mapping the logic collapse of models below 3-bit quantization (e.g. `Q2_K`).
@@ -24,7 +24,10 @@ This repository is strictly designed to measure the absolute intelligence floor 
 
 **Run an Experiment:**
 ```bash
-python experiments/02_termux_native_benchmark.py --threads 4
+python experiments/02_termux_native/02_termux_native_benchmark.py --threads 4
 ```
 
-*Note on ARM Threading:* Avoid oversubscribing threads on asymmetric ARM big.LITTLE architectures (e.g. Snapdragon). Capping threads to the exact number of Performance cores prevents synchronization stalling and thermal throttling.
+*Note on ARM Threading:* Sweep thread counts because big.LITTLE CPUs may perform best below total core count.
+
+## Milestones
+*   **Milestone 1:** Qwen2.5 3B quantization and thread-scaling on Samsung Galaxy F23 5G.
