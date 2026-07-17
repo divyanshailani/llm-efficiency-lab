@@ -89,3 +89,25 @@ We re-ran the native Android benchmark using all 8 physical cores (`--threads 8`
 *   **Long Prefill:** Marginally improved to 16.3 tok/s (from 15.3 tok/s).
 
 **Why this happens:** The Snapdragon 750G uses an asymmetric "big.LITTLE" architecture (2 Fast Cores, 6 Slow Efficiency Cores). When forcing `llama.cpp` to use 8 threads for sequential token generation (Decode), the fast cores spend clock cycles waiting for the slow cores to finish their matrix math. Furthermore, firing all 8 cores causes immediate thermal throttling (as evidenced by the 2.01 TPS minimum drop). For Edge AI on mobile, capping threads to match the exact number of "Performance" cores (or just using 4) yields the highest and most stable TPS.
+
+## 8. Context Scaling, KV Cache, and Lazy Mmap Memory
+To find the limits of the 6GB RAM on the Samsung F23, we ran a context scaling sweep (`n_ctx` = 512, 1024, 2048, 3072, 4096) on the `Q4_K_M` model. 
+
+Against initial expectations, the Android device easily survived `n_ctx=4096` without crashing.
+
+| Context Window | RAM (Peak Warm) | TTFT | Decode Speed |
+| :--- | :--- | :--- | :--- |
+| **512** | 2872.11 MB | 217.8 ms | 4.84 TPS |
+| **1024** | 3083.14 MB | 202.8 ms | 4.86 TPS |
+| **2048** | 2724.42 MB | 237.0 ms | 4.16 TPS |
+| **3072** | 2726.71 MB | 205.7 ms | 4.83 TPS |
+| **4096** | 3077.18 MB | 207.3 ms | 4.88 TPS |
+
+### Finding 1: Capacity vs Allocated Cache (The GQA Factor)
+Passing `--ctx 4096` to `llama-cpp-python` does not instantly allocate the entire memory payload; it only sets the context *capacity* ceiling. The actual RAM footprint is proportional to the tokens processed and stored in the KV Cache. Because the Qwen2.5 3B model utilizes Grouped Query Attention (GQA), the KV tensors are highly compressed:
+`36 layers * 2 KV tensors * 2 KV heads * 128 head_dim * 2 bytes ~= 36 KB per token.`
+
+Even if the cache was fully saturated at 4096 tokens, it would only cost `~144 MB` of RAM, making it incredibly survivable for mobile Edge AI.
+
+### Finding 2: Lazy Loading vs zRAM Panic
+The chaotic fluctuations in Resident Set Size (RSS) during the sweep (e.g., memory dropping from 3083 MB to 2724 MB as context increased) demonstrate the mechanics of `mmap` (memory-mapped) file loading. The OS only keeps memory pages resident as they are touched, actively paging them in and out. While Android's LMKD or zRAM compression may play a role, RSS drops alone are insufficient to prove zRAM activation without deeper kernel profiling (e.g., checking `/proc/swaps`).
