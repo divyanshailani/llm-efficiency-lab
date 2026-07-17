@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.agents/
+.DS_Store
+*.gguf
+*.json
