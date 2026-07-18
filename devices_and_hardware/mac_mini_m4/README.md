@@ -97,7 +97,7 @@ We ran a comprehensive matrix testing `llama.cpp`'s KV cache quantization across
 
 ### Key Findings
 1. **Flash Attention Requirement:** On the Apple Silicon (`MTL`) backend, quantized KV caches strictly require Flash Attention (`-fa 1`). Disabling it causes an immediate context creation failure.
-2. **The Asymmetric Precision Trap:** Mixing Key/Value precisions (e.g., `K=q8_0, V=q4_0`) exposed a severe unoptimized fallback in the Metal kernel. Prompt processing plummeted to **53.6 t/s** (down from 193 t/s), and generation completely hung the GPU at 16k context depths.
+2. **The Asymmetric Precision Trap:** Mixing Key/Value precisions (e.g., `K=q8_0, V=q4_0`) exposed a severe unoptimized fallback in the Metal kernel. Prompt processing plummeted to **53.6 t/s** (down from 193 t/s), and generation completely hung the GPU at 16k context depths. *Note: This is a known upstream `llama.cpp` issue describing this exact pattern (`q8_0/q4_0` failing on Metal while symmetric quantizations work). It is likely a backend-specific bug rather than a theoretical limitation.*
 3. **Symmetric 8-Bit is Optimal:** Using `q8_0:q8_0` yielded a highly stable and measurable performance boost, reducing memory overhead while actually *increasing* decode speed slightly due to reduced bandwidth saturation.
 
 ### Symmetric `q8_0:q8_0` vs `f16:f16` (Q4_K_M)
@@ -109,4 +109,6 @@ We ran a comprehensive matrix testing `llama.cpp`'s KV cache quantization across
 | **Decode Speed (TPS)** | 15.75 t/s | **16.25 t/s** |
 
 > [!TIP]
-> The `q8_0:q8_0` cache provides a free decode speedup (pushing throughput closer to 16.5 t/s) by halving the memory bandwidth required to read the context cache during auto-regressive generation, with an imperceptible penalty to prompt ingestion speed. Always use `-fa 1 --cache-type-k q8_0 --cache-type-v q8_0` on Mac M4.
+> The `q8_0:q8_0` cache provides a free 3.2% decode speedup by halving the memory bandwidth required to read the context cache during auto-regressive generation, with an imperceptible penalty to prompt ingestion speed. Always use `-fa 1 --cache-type-k q8_0 --cache-type-v q8_0` on Mac M4.
+
+**The Main Lesson:** KV-cache quantization is primarily a memory and long-context scaling optimization. It is not automatically a major decode-speed optimization. Our decode speeds only improved from 15.75 to 16.25 t/s, demonstrating that generation remains heavily dominated by reading the 5.4 GB `Q4_K_M` model weights, not just the attention cache.
