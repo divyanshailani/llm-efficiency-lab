@@ -6,7 +6,7 @@ __pycache__/
 .DS_Store
 *.gguf
 *.json
-!results/**/*.json
+!devices/**/*.json
 docs/llm_experiment_01_benchmark.md
 models/
 tools/
