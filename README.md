@@ -1,4 +1,4 @@
-# LLM Efficiency Lab
+# LLM Inference Efficiency Lab
 
 Finding the best quality, memory, and speed trade-offs for quantized LLMs across Apple Silicon and Hosted GPUs, followed by selective mobile validation.
 
@@ -7,7 +7,7 @@ Finding the best quality, memory, and speed trade-offs for quantized LLMs across
 We use a strict 3-tier testing pipeline to evaluate models (like Qwen 3B, 7B, 9B) before they ever touch an edge device.
 
 ### Tier 1: Local Apple Silicon
-Our controlled research baseline, utilizing the massive memory bandwidth of Apple Silicon (Unified Memory) to measure raw prompt processing (TTFT) and decode speeds.
+Our controlled research baseline, utilizing the massive memory bandwidth of Apple Silicon (Unified Memory) to measure prompt-processing throughput (PP) and decode speeds.
 * **`llama.cpp` + Metal:** The GGUF standard baseline.
 * **`mlx-lm`:** Clean MLX-native single-request benchmarks.
 * **`oMLX`:** Serving overhead, persistent KV caching, concurrency, and SSD-cache experiments.
@@ -32,3 +32,11 @@ We have moved to a strict **device-centric** repository structure so that anyone
 * **Phase 1 (Complete):** Established edge constraints (Context cliff and KV memory scaling) on Samsung Galaxy F23 5G via native `llama-bench`. See [devices_and_hardware/samsung_f23_5g/README.md](devices_and_hardware/samsung_f23_5g/README.md) and `devices_and_hardware/samsung_f23_5g/scripts` for reproducible scripts.
 * **Phase 2 (Complete):** Local Apple Silicon baseline tests on Mac mini (M4, 16GB) for Qwythos-9B-v2 (`Q4_K_M` vs `Q8_0`) using `llama-bench`. See [devices_and_hardware/mac_mini_m4/README.md](devices_and_hardware/mac_mini_m4/README.md) and `devices_and_hardware/mac_mini_m4/scripts` for reproducible scripts.
 * **Phase 3 (Active):** Local Apple Silicon tests on Qwen 3B across `llama.cpp` and `MLX` runtimes.
+
+## Methodology and Limitations
+
+> [!WARNING]
+> Please note that all results documented in this repository are heavily **hardware-**, **runtime-**, **model-**, and **context-dependent**. 
+> - **Hardware:** Variations in memory bandwidth, core counts, and thermal throttling (especially on mobile) significantly alter real-world metrics.
+> - **Runtime:** Different inference engines (`llama.cpp`, `MLX`) utilize hardware accelerators (Metal, NEON) differently.
+> - **Model & Context:** Quantization formats and context lengths dictate whether an operation is compute-bound or memory-bandwidth bound.
