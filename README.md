@@ -28,4 +28,5 @@ Once the optimal configurations are mapped on Tiers 1 and 2, we selectively depl
 
 ## Milestones
 * **Phase 1 (Complete):** Established edge constraints (Context cliff and KV memory scaling) on Samsung Galaxy F23 5G via native `llama-bench`.
-* **Phase 2 (Active):** Local Apple Silicon baseline tests on Qwen 3B across `llama.cpp` and `MLX` runtimes.
+* **Phase 2 (Complete):** Local Apple Silicon baseline tests on Mac mini (M4, 16GB) for Qwythos-9B-v2 (`Q4_K_M` vs `Q8_0`) using `llama-bench`. See [docs/mac_mini_m4_benchmark_guide.md](docs/mac_mini_m4_benchmark_guide.md) and `experiments/06_mac_m4_baseline` for reproducible scripts.
+* **Phase 3 (Active):** Local Apple Silicon tests on Qwen 3B across `llama.cpp` and `MLX` runtimes.

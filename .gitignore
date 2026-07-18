@@ -8,3 +8,6 @@ __pycache__/
 *.json
 !results/**/*.json
 docs/llm_experiment_01_benchmark.md
+models/
+tools/
+hf_venv/
