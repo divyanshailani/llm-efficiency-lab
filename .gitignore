@@ -7,7 +7,7 @@ __pycache__/
 *.gguf
 *.json
 !devices_and_hardware/**/*.json
-docs/llm_experiment_01_benchmark.md
+docs/llm_experiments_study_guide.md
 models/
 tools/
 hf_venv/
