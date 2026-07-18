@@ -21,10 +21,12 @@ Once the optimal configurations are mapped on Tiers 1 and 2, we selectively depl
 
 ## Repository Structure
 
+We have moved to a strict **device-centric** repository structure so that anyone can easily navigate to their target hardware and find the exact scripts, results, and documentation.
+
+* `devices/mac_mini_m4/`: Contains the M4 baseline scripts, JSON results, and benchmark guides.
+* `devices/samsung_f23_5g/`: Contains the physical edge testing scripts, Termux setups, and results for the Samsung F23.
 * `telemetry/`: Core profiling engine for capturing hardware metrics.
-* `experiments/`: Targeted hypothesis scripts spanning the three tiers.
-* `results/`: Output telemetry, benchmarks, and JSON data.
-* `docs/`: Theory and deployment documentation.
+* `docs/`: Theory and general architecture documentation.
 
 ## Milestones
 * **Phase 1 (Complete):** Established edge constraints (Context cliff and KV memory scaling) on Samsung Galaxy F23 5G via native `llama-bench`.
