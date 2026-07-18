@@ -90,3 +90,23 @@ To validate Apple's native `mlx` framework against `llama.cpp`, we benchmarked t
 
 > [!NOTE]
 > The MLX OptiQ model retains sensitive layers at 8-bit for maximum quality (yielding 5.211 bits per weight). This larger footprint (6.6 GB vs 5.4 GB) perfectly explains the slightly slower decode speed (15.17 TPS vs 16.67 TPS), validating that decode remains strictly bound by memory bandwidth on Apple Silicon.
+
+## Phase 4: KV Cache Quantization & Flash Attention
+
+We ran a comprehensive matrix testing `llama.cpp`'s KV cache quantization across 5 repetitions per configuration to see if we could push decode speeds closer to 20 t/s on the `Q4_K_M` baseline.
+
+### Key Findings
+1. **Flash Attention Requirement:** On the Apple Silicon (`MTL`) backend, quantized KV caches strictly require Flash Attention (`-fa 1`). Disabling it causes an immediate context creation failure.
+2. **The Asymmetric Precision Trap:** Mixing Key/Value precisions (e.g., `K=q8_0, V=q4_0`) exposed a severe unoptimized fallback in the Metal kernel. Prompt processing plummeted to **53.6 t/s** (down from 193 t/s), and generation completely hung the GPU at 16k context depths.
+3. **Symmetric 8-Bit is Optimal:** Using `q8_0:q8_0` yielded a highly stable and measurable performance boost, reducing memory overhead while actually *increasing* decode speed slightly due to reduced bandwidth saturation.
+
+### Symmetric `q8_0:q8_0` vs `f16:f16` (Q4_K_M)
+
+| Metric | `f16:f16` (Baseline) | `q8_0:q8_0` |
+| :--- | :--- | :--- |
+| **Prompt Processing (512 ctx)** | 208.97 t/s | 207.65 t/s |
+| **Prompt Processing (16k ctx)** | 186.78 t/s | 180.90 t/s |
+| **Decode Speed (TPS)** | 15.75 t/s | **16.25 t/s** |
+
+> [!TIP]
+> The `q8_0:q8_0` cache provides a free decode speedup (pushing throughput closer to 16.5 t/s) by halving the memory bandwidth required to read the context cache during auto-regressive generation, with an imperceptible penalty to prompt ingestion speed. Always use `-fa 1 --cache-type-k q8_0 --cache-type-v q8_0` on Mac M4.
