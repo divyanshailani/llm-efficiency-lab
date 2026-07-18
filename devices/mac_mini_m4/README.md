@@ -24,9 +24,9 @@ We evaluated two quantizations of the Qwythos-9B-v2 model sourced from `mraderma
    cd tools/llama.cpp
    make clean && make LLAMA_METAL=1
    ```
-2. **Run the Benchmark Script:** Navigate to the experiment directory and run the automated script. This script automatically handles downloading the model files via `curl` (to avoid HuggingFace hf-transfer CDN rate limits) and executing the benchmark suite.
+2. **Run the Benchmark Script:** Navigate to the `scripts/` directory and run the automated script. This script automatically handles downloading the model files via `curl` (to avoid HuggingFace hf-transfer CDN rate limits) and executing the benchmark suite.
    ```bash
-   cd experiments/06_mac_m4_baseline
+   cd scripts/
    ./run_benchmark.sh
    ```
 
@@ -41,7 +41,7 @@ For reference, the script executes the following parameters for each model:
 - `repetitions` = 5
 
 ## Expected Outcomes
-The output JSON files are saved to `results/mac_mini_m4/`. On a 16 GB Mac mini M4, you should observe:
+The output JSON files are saved to `results/`. On a 16 GB Mac mini M4, you should observe:
 - **Q4_K_M:** ~16.67 tokens/sec decode throughput, consuming ~7.4 GB unified memory without swapping.
 - **Q8_0:** ~10.67 tokens/sec decode throughput, pushing the 16 GB RAM to its practical limit (~15.23 GB used, ~1.5 GB compressed) but operating without disk swapping.
 - **Thermals:** Sustained temperatures around 67–75°C.
