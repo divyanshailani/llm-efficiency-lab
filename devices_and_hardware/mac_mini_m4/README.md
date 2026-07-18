@@ -40,8 +40,31 @@ For reference, the script executes the following parameters for each model:
 - `generation` = 128 tokens
 - `repetitions` = 5
 
-## Expected Outcomes
-The output JSON files are saved to `results/`. On a 16 GB Mac mini M4, you should observe:
-- **Q4_K_M:** ~16.67 tokens/sec decode throughput, consuming ~7.4 GB unified memory without swapping.
-- **Q8_0:** ~10.67 tokens/sec decode throughput, pushing the 16 GB RAM to its practical limit (~15.23 GB used, ~1.5 GB compressed) but operating without disk swapping.
-- **Thermals:** Sustained temperatures around 67–75°C.
+## Benchmark Results
+
+Below are the aggregated results from `llama-bench` evaluating prompt processing (ingestion) and token generation on the M4 hardware. 
+
+### Prompt Processing (Ingestion Speed)
+*Measured in tokens per second (t/s)*
+
+| Context Size (Tokens) | Qwythos-9B-v2 `Q4_K_M` | Qwythos-9B-v2 `Q8_0` |
+|-----------------------|-------------------------|-----------------------|
+| **512**               | 209.69 t/s             | 216.37 t/s            |
+| **2048**              | 208.21 t/s             | 215.35 t/s            |
+| **4096**              | 202.32 t/s             | 211.41 t/s            |
+| **8192**              | 197.20 t/s             | 206.62 t/s            |
+| **16384**             | 186.77 t/s             | 197.62 t/s            |
+
+> [!NOTE]
+> Interestingly, the `Q8_0` model shows slightly faster prompt ingestion speeds compared to `Q4_K_M`. This is a known phenomenon on Apple Silicon where 8-bit memory alignments can sometimes process faster through the Metal backend than asymmetric 4-bit block quantizations during the compute-heavy prompt evaluation phase.
+
+### Text Generation (Decode Speed)
+*Measured in tokens per second (t/s) for 128 tokens*
+
+| Model Quantization | Decode Speed | 
+|--------------------|--------------|
+| **Q4_K_M** (~5.4 GB) | 16.67 t/s |
+| **Q8_0** (~9.1 GB)   | 10.67 t/s |
+
+> [!TIP]
+> For interactive chat applications, `Q4_K_M` provides a much smoother reading experience (16+ t/s), while `Q8_0` (10.6 t/s) remains highly usable but pushes the memory limits of a 16GB system when combined with a large KV cache.
