@@ -68,3 +68,25 @@ Below are the aggregated results from `llama-bench` evaluating prompt processing
 
 > [!TIP]
 > For interactive chat applications, `Q4_K_M` provides a much smoother reading experience (16+ t/s), while `Q8_0` (10.6 t/s) remains highly usable but pushes the memory limits of a 16GB system when combined with a large KV cache.
+
+## Phase 3: MLX OptiQ 4-Bit Baseline
+
+To validate Apple's native `mlx` framework against `llama.cpp`, we benchmarked the official `mlx-community` mixed-precision quantization. 
+
+**Configuration:**
+- **Model:** `mlx-community/Qwythos-9B-v2-OptiQ-4bit`
+- **MTP:** disabled (Language tower only)
+- **Quantization:** OptiQ mixed precision
+- **Effective BPW:** 5.211
+- **Language tower size:** ~6.6 GB (Total HuggingFace cache ~8.2GB)
+
+### Results vs llama.cpp
+
+| Metric | `llama.cpp` (`Q4_K_M`, ~5.4 GB) | `mlx-lm` (`OptiQ 4-bit`, ~6.6 GB) |
+| :--- | :--- | :--- |
+| **Prompt Processing (PP)** | 209.69 tok/s (512 ctx) | **146.69 tok/s** (57 ctx) |
+| **Decode Speed (TPS)** | **16.67 tok/s** | 15.17 tok/s |
+| **Peak Memory Usage** | ~5.4 GB | 7.32 GB |
+
+> [!NOTE]
+> The MLX OptiQ model retains sensitive layers at 8-bit for maximum quality (yielding 5.211 bits per weight). This larger footprint (6.6 GB vs 5.4 GB) perfectly explains the slightly slower decode speed (15.17 TPS vs 16.67 TPS), validating that decode remains strictly bound by memory bandwidth on Apple Silicon.
