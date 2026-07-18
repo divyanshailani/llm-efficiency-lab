@@ -31,7 +31,7 @@ We have moved to a strict **device-centric** repository structure so that anyone
 ## Milestones
 * **Phase 1 (Complete):** Established edge constraints (Context cliff and KV memory scaling) on Samsung Galaxy F23 5G via native `llama-bench`. See [devices_and_hardware/samsung_f23_5g/README.md](devices_and_hardware/samsung_f23_5g/README.md) and `devices_and_hardware/samsung_f23_5g/scripts` for reproducible scripts.
 * **Phase 2 (Complete):** Local Apple Silicon baseline tests on Mac mini (M4, 16GB) for Qwythos-9B-v2 (`Q4_K_M` vs `Q8_0`) using `llama-bench`. See [devices_and_hardware/mac_mini_m4/README.md](devices_and_hardware/mac_mini_m4/README.md) and `devices_and_hardware/mac_mini_m4/scripts` for reproducible scripts.
-* **Phase 3 (Active):** Local Apple Silicon tests on Qwen 3B across `llama.cpp` and `MLX` runtimes.
+* **Phase 3 (Complete):** Local Apple Silicon tests on Qwythos-9B-v2 across `llama.cpp` and `mlx-lm` (OptiQ mixed-precision) runtimes.
 
 ## Methodology and Limitations
 
