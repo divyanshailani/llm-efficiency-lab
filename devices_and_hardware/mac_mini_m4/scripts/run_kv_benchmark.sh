@@ -22,8 +22,7 @@ echo "=== LLM Efficiency Lab: KV Scaling & Flash Attention ==="
 # 1. Download Q4_K_S Model for control test
 if [ ! -f "${MODELS_DIR}/${MODEL_Q4_K_S}" ]; then
     echo "Downloading ${MODEL_Q4_K_S}..."
-    curl -C - -O -L "https://huggingface.co/${REPO_ID}/resolve/main/${MODEL_Q4_K_S}"
-    mv "${MODEL_Q4_K_S}" "${MODELS_DIR}/"
+    curl -C - -L -o "${MODELS_DIR}/${MODEL_Q4_K_S}" "https://huggingface.co/${REPO_ID}/resolve/main/${MODEL_Q4_K_S}"
 fi
 
 if [ ! -f "$LLAMA_BENCH" ]; then
@@ -55,10 +54,10 @@ done
 
 echo "[3/3] Running Threads Matrix (Matrix 2 & 3)..."
 
-# Thread Scaling Test (Using optimal asymmetric K=q8_0 V=q4_0, FA=1)
+# Thread Scaling Test (Using optimal symmetric K=q8_0 V=q8_0, FA=1)
 for t in 6 8 10; do
     echo "Benchmarking Threads=${t}..."
-    "$LLAMA_BENCH" -m "${MODELS_DIR}/${MODEL_Q4_K_M}" -p $CONTEXTS -n $GEN_TOKENS -r $REPS -t $t --cache-type-k q8_0 --cache-type-v q4_0 -fa 1 -o json > "${RESULTS_DIR}/threads_${t}_q8_q4.json"
+    "$LLAMA_BENCH" -m "${MODELS_DIR}/${MODEL_Q4_K_M}" -p $CONTEXTS -n $GEN_TOKENS -r $REPS -t $t --cache-type-k q8_0 --cache-type-v q8_0 -fa 1 -o json > "${RESULTS_DIR}/threads_${t}_q8_q8.json"
 done
 
 # Q4_K_S vs Q4_K_M Control Test (Default settings, FA=1, t=4)

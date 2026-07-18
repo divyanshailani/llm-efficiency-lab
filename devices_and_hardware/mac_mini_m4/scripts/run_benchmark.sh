@@ -24,8 +24,7 @@ for MODEL in "${MODELS[@]}"; do
     if [ ! -f "${MODELS_DIR}/${MODEL}" ]; then
         echo "Downloading ${MODEL}..."
         # Using curl to download directly from HuggingFace to avoid hf-transfer CDN rate limits (403s) on large files
-        curl -C - -O -L "https://huggingface.co/${REPO_ID}/resolve/main/${MODEL}"
-        mv "${MODEL}" "${MODELS_DIR}/"
+        curl -C - -L -o "${MODELS_DIR}/${MODEL}" "https://huggingface.co/${REPO_ID}/resolve/main/${MODEL}"
     else
         echo "${MODEL} already exists, skipping download."
     fi
