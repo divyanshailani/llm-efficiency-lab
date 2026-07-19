@@ -1,0 +1,21 @@
+=== Starting Strict Agent Survival Benchmark ===
+
+1 & 2. Tool Calling & Schema Validation
+  Tool JSON Check: ✅ PASS
+  Schema Validity: ✅ PASS
+
+3. State Tracking (Normalized)
+  State Tracking: ✅ PASS
+
+4. Executable Debugging Test
+  Debugging: ✅ PASS
+
+5. Edit-Plan Follow-Through
+  Follow-Through: ✅ PASS
+
+6. Long-Context Recall (4K)
+  Long Context 4K: ❌ FAIL (Got: '')
+
+=== Final Score: 5/6 ===
+Results saved to survival_results.json
+💀 MODEL FAILED QUALITY GATES.

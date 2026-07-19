@@ -112,3 +112,32 @@ We ran a comprehensive matrix testing `llama.cpp`'s KV cache quantization across
 > The `q8_0:q8_0` cache provides a free 3.2% decode speedup by halving the memory bandwidth required to read the context cache during auto-regressive generation, with an imperceptible penalty to prompt ingestion speed. Always use `-fa 1 --cache-type-k q8_0 --cache-type-v q8_0` on Mac M4.
 
 **The Main Lesson:** KV-cache quantization is primarily a memory and long-context scaling optimization. It is not automatically a major decode-speed optimization. Our decode speeds only improved from 15.75 to 16.25 t/s, demonstrating that generation remains heavily dominated by reading the 5.4 GB `Q4_K_M` model weights, not just the attention cache.
+
+## Phase 5: Agent Survival Benchmark (Gemma 4 12B)
+
+After proving we can run models up to 9B efficiently, we shifted our paradigm from finding the "smallest model" to finding the **"smallest useful agent."** To test this on Mac Silicon, we deployed `gemma-4-12b-it-qat-q4_0.gguf`.
+
+### Critical Hardware Constraint (M4 16GB)
+Deploying a massive 12B model on a 16GB Unified Memory Mac exposes a fatal flaw in default LLM engine behavior. By default, `llama-server` provisions multiple parallel request slots and massive prompt batch sizes (e.g., `2048`). 
+- **The Crash:** Computing the activations for 2048 tokens simultaneously demands a massive contiguous chunk of VRAM. Because the Mac shares its 16GB memory with the OS, this massive instantaneous VRAM request instantly triggers a kernel panic/OOM crash in Apple's Metal framework.
+- **The Fix:** You **must** lock the server to a single parallel slot and a tiny batch size.
+  ```bash
+  # REQUIRED safe parameters for 12B models on 16GB Macs:
+  -np 1 -b 512 -ub 512
+  ```
+
+### Benchmark Results
+Using our strict `agent_survival_benchmark.py` (which uses `jsonschema` for strict tool output validation and `exec()` to verify debugged python code), the `Q4_0` quantized Gemma model scored **5/6**:
+- **Tool JSON Check:** ✅ PASS
+- **Schema Validity:** ✅ PASS
+- **State Tracking:** ✅ PASS
+- **Executable Debugging:** ✅ PASS
+- **Edit-Plan Follow-Through:** ✅ PASS
+- **Long-Context Recall (4K):** ❌ FAIL (Returned empty string)
+
+**Conclusion:** The Q4_0 quantization preserves strict agency (tool usage, logic, state), but breaks down catastrophically on long-context needle tests. It is a highly capable "daily driver" agent for short-to-medium length contexts.
+
+To reproduce this benchmark, simply run:
+```bash
+./scripts/run_agent_survival.sh
+```
