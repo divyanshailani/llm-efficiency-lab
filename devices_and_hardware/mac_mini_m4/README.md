@@ -148,3 +148,8 @@ With the model proven to be a highly capable agent, we measured its raw processi
 | **Decode Speed (TPS)** | **12.50 t/s** |
 
 **Hardware Context:** Compared to the 9B model (16.67 t/s), the 12B model decodes at 12.5 t/s on the 16GB M4. This is entirely expected as auto-regressive generation is purely memory-bandwidth bound, and 12B parameters require significantly more bandwidth to read per token. However, 12.5 t/s is faster than typical reading speed, confirming Codex's hypothesis that Gemma 4 12B Q4_0 is the ideal "daily driver" local agent for this hardware.
+
+To reproduce these safe speed metrics, run:
+```bash
+./scripts/run_gemma_speed_benchmark.sh
+```
