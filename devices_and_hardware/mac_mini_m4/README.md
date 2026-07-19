@@ -137,7 +137,14 @@ Using our strict `agent_survival_benchmark.py` (which uses `jsonschema` for stri
 
 **Conclusion:** The Q4_0 quantization preserves strict agency (tool usage, logic, state), but breaks down catastrophically on long-context needle tests. It is a highly capable "daily driver" agent for short-to-medium length contexts.
 
-To reproduce this benchmark, simply run:
-```bash
-./scripts/run_agent_survival.sh
-```
+### Speed Benchmarks
+With the model proven to be a highly capable agent, we measured its raw processing speed using `llama-bench` (forced to a safe `-b 512` batch size).
+
+| Metric | Gemma 4 12B (`Q4_0` + `q8_0:q8_0` KV) |
+| :--- | :--- |
+| **Prompt Processing (512 ctx)** | 144.80 t/s |
+| **Prompt Processing (2048 ctx)** | 137.93 t/s |
+| **Prompt Processing (4096 ctx)** | 133.49 t/s |
+| **Decode Speed (TPS)** | **12.50 t/s** |
+
+**Hardware Context:** Compared to the 9B model (16.67 t/s), the 12B model decodes at 12.5 t/s on the 16GB M4. This is entirely expected as auto-regressive generation is purely memory-bandwidth bound, and 12B parameters require significantly more bandwidth to read per token. However, 12.5 t/s is faster than typical reading speed, confirming Codex's hypothesis that Gemma 4 12B Q4_0 is the ideal "daily driver" local agent for this hardware.
