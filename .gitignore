@@ -12,3 +12,5 @@ models/
 tools/
 hf_venv/
 Notes/
+
+.original_swarm_files/
