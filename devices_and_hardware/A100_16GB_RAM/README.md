@@ -1,37 +1,42 @@
-# Qwen 3.6 27B Cloud GPU Benchmark
+# Qwen 3.6 27B A100 Benchmark
 
-This document provides reproducibility details and comprehensive architectural findings for testing the Qwen 3.6 27B model on a serverless Cloud GPU environment.
+This document provides reproducibility details and comprehensive architectural findings for testing the Qwen 3.6 27B model locally on an NVIDIA A100.
 
 ## Hardware Configuration
-- **Device:** Serverless Cloud Instance
+- **Device:** Generic Server / Local Workstation
 - **GPU:** 1x NVIDIA A100
 - **VRAM:** 80 GB
-- **System RAM:** 16 GB (Allocated baseline)
+- **System RAM:** 16 GB 
 
 ## Software Versions
 - **Inference Engine:** `vLLM`
 - **Attention Backend:** `FlashInfer` (Optimized C++ JIT Kernels)
 - **Model:** `Qwen/Qwen3.6-27B` (bf16 precision, ~54 GB)
 
-## Deployment Architecture
+## Reproduction Steps
 
-To host a model of this magnitude serverlessly, we deployed a containerized Python script using a cloud SDK. 
+1. **Install vLLM:** Ensure you have installed the `vllm` library.
+   ```bash
+   pip install vllm
+   ```
+2. **Start the Inference Server:** Run the following command to start a local vLLM server that binds to port 8000. This command optimally allocates 85% of your VRAM, enabling the maximum possible context window without causing OOM crashes on the A100.
+   ```bash
+   vllm serve Qwen/Qwen3.6-27B --host 0.0.0.0 --port 8000 --tensor-parallel-size 1 --gpu-memory-utilization 0.85 --max-model-len 32768 --enable-auto-tool-choice --tool-call-parser hermes
+   ```
+   *Note: Loading the 54GB weights into VRAM and compiling the FlashInfer kernels takes ~6 minutes. Wait until you see `Uvicorn running on http://0.0.0.0:8000`.*
 
-### Critical Infrastructure Lessons
-During deployment, we uncovered several severe edge cases in serverless GPU hosting:
-
-1. **The Web Server Blocking Bug:** Serverless HTTP proxies often demand that your setup function returns immediately. Using synchronous blocking calls (like `subprocess.run()`) to launch `vLLM` will trick the cloud proxy into thinking the container is permanently stuck initializing. This leads to the container being violently killed after its maximum startup timeout (e.g., 20 minutes), creating a devastating and expensive crash loop. **Fix:** Always use a non-blocking background spawn (like `subprocess.Popen()`) so the cloud proxy can connect to the port instantly.
-2. **DNS Propagation Delays (The 404 Bug):** Serverless ingress routes take roughly 10-15 seconds to propagate to the global edge network after deployment. Automated testing scripts that ping the endpoint immediately will fail with a `404 Not Found`. **Fix:** Add a `sleep 15` buffer before pinging new endpoints.
-3. **Ghost Containers:** Terminating scripts locally does not always gracefully kill the cloud container. Always explicitly run the cloud provider's stop command before deploying structural changes to avoid port conflicts and wasted credits.
-4. **Volume Syncing Bugs:** Attempting to write telemetry to standard cloud volumes via disk I/O results in heavy caching delays (files won't appear to the client script until the container shuts down). **Fix:** We bypassed disk I/O entirely by using a synchronized Redis-backed cloud Dictionary for live, sub-second telemetry streaming.
-5. **Multiline String Syntax Bugs:** When generating bash scripts programmatically using multiline strings (`"""`), unescaped double quotes inside tools like `awk` can prematurely terminate the string and trigger silent syntax errors. Always use raw strings (`r"""`) to safeguard shell escapes.
+3. **Run the Benchmark Suites:** Open a second terminal and navigate to the `scripts` folder. Run either benchmark script:
+   ```bash
+   python3 scripts/qwen_speed_sweep.py
+   python3 scripts/qwen_survival_benchmark.py
+   ```
 
 ## Benchmark Results: Speed Sweep
 
 Using our automated `qwen_speed_sweep.py` script, we benchmarked the A100's capacity across various context lengths.
 
 ### Raw Telemetry
-During the sweep, we captured live hardware telemetry:
+During the sweep, we capture live hardware telemetry via shell subprocesses (`free -m` and `nvidia-smi`):
 - **VRAM Usage:** `68,567 MB / 81,920 MB` (Flatlined at 0.85 utilization)
 - **RAM Usage:** `~5.5 GB / 16 GB` (Extremely lightweight Python/Uvicorn overhead)
 

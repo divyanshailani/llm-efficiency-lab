@@ -2,12 +2,20 @@ import requests
 import time
 import sys
 import json
-import modal
+import subprocess
 
-# Adjust this if the Modal deploy outputs a slightly different URL
-BASE_URL = "https://kartikchijwani-maker--qwen-benchmark-endpoint-serve.modal.run/v1/chat/completions"
+BASE_URL = "http://localhost:8000/v1/chat/completions"
 MODEL = "Qwen/Qwen3.6-27B"
 CONTEXT_SIZES = [512, 2048, 4096, 8192, 16384]
+
+def get_local_telemetry():
+    telemetry = {}
+    try:
+        telemetry["ram"] = subprocess.getoutput("free -m | grep Mem | awk '{print $3 \"MB / \" $2 \"MB\"}'")
+        telemetry["vram"] = subprocess.getoutput("nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits | awk '{print $1 \"MB / \" $2 \"MB\"}'")
+    except Exception as e:
+        telemetry["error"] = str(e)
+    return telemetry
 
 def generate_context(target_tokens):
     # 'The quick brown fox jumps over the lazy dog. ' is roughly 10 tokens
@@ -19,7 +27,7 @@ def generate_context(target_tokens):
 def run_sweep():
     print("=== Rigorous Context Size Sweep (Qwen 27B on A100) ===")
     
-    print("\n[Waking up container and loading 56GB weights to VRAM...]")
+    print("\n[Waking up vLLM engine and loading weights into VRAM...]")
     try:
         requests.post(BASE_URL, json={"model": MODEL, "messages": [{"role": "user", "content": "hello"}], "max_tokens": 1}, timeout=600)
         print("[Warmup complete! Commencing benchmark sweep...]")
@@ -41,8 +49,7 @@ def run_sweep():
         
         try:
             start_time = time.time()
-            # 600s timeout just in case it hits a cold start
-            resp = requests.post(BASE_URL, json=payload, stream=True, timeout=600)
+            resp = requests.post(BASE_URL, json=payload, stream=True, timeout=120)
             resp.raise_for_status()
             
             ttft = None
@@ -68,12 +75,8 @@ def run_sweep():
             ingest_speed = size / ttft if ttft and ttft > 0 else 0
             decode_speed = token_count / decode_time if decode_time and decode_time > 0 else 0
             
-            # Fetch live hardware telemetry from the Modal volume
-            try:
-                telemetry_func = modal.Function.from_name("qwen-benchmark-endpoint", "get_hardware_telemetry")
-                telemetry = telemetry_func.remote()
-            except Exception as e:
-                telemetry = {"error": str(e)}
+            # Fetch live hardware telemetry locally
+            telemetry = get_local_telemetry()
             
             print(f"  TTFT: {ttft:.3f}s | Ingest Speed: {ingest_speed:.2f} tok/s | Decode Speed: {decode_speed:.2f} tok/s")
             if "error" not in telemetry:
@@ -93,7 +96,7 @@ def run_sweep():
     print("| Context Size (Tokens) | Prompt Processing (Ingestion) | Decode Speed | VRAM Usage | RAM Usage |")
     print("|-----------------------|-------------------------------|--------------|------------|-----------|")
     for r in results:
-        vram = r.get("telemetry", {}).get("vram", "N/A").split("(")[0].strip() if "error" not in r.get("telemetry", {}) else "N/A"
+        vram = r.get("telemetry", {}).get("vram", "N/A") if "error" not in r.get("telemetry", {}) else "N/A"
         ram = r.get("telemetry", {}).get("ram", "N/A") if "error" not in r.get("telemetry", {}) else "N/A"
         print(f"| {r['context']} | {r['ingest_speed']:.2f} t/s | {r['decode_speed']:.2f} t/s | {vram} | {ram} |")
     

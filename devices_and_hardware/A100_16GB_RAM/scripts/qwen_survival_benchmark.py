@@ -6,9 +6,18 @@ import jsonschema
 import re
 import contextlib
 import io
-import modal
+import subprocess
 
-BASE_URL = "https://kartikchijwani-maker--qwen-benchmark-endpoint-serve.modal.run/v1/chat/completions"
+BASE_URL = "http://localhost:8000/v1/chat/completions"
+
+def get_local_telemetry():
+    telemetry = {}
+    try:
+        telemetry["ram"] = subprocess.getoutput("free -m | grep Mem | awk '{print $3 \"MB / \" $2 \"MB\"}'")
+        telemetry["vram"] = subprocess.getoutput("nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits | awk '{print $1 \"MB / \" $2 \"MB\"}'")
+    except Exception as e:
+        telemetry["error"] = str(e)
+    return telemetry
 
 def test_model(messages, tools=None, max_tokens=512):
     payload = {
@@ -93,7 +102,6 @@ def run_quality_gates():
                 jsonschema.validate(instance=args, schema=schema)
                 schema_pass = True
         except Exception as e:
-            print(f"RAW MSG: {msg}")
             print(f"  [DEBUG] Schema error: {e}")
             
     print(f"  Tool JSON Check: {'✅ PASS' if tool_pass else '❌ FAIL'}")
@@ -194,16 +202,11 @@ def run_quality_gates():
     print(f"\n=== Final Score: {passed}/{total} ===")
     
     # Fetch final hardware telemetry
-    try:
-        telemetry_func = modal.Function.from_name("qwen-benchmark-endpoint", "get_hardware_telemetry")
-        telemetry = telemetry_func.remote()
-        if "error" not in telemetry:
-            print(f"\n=== Hardware Telemetry ===")
-            print(f"CPU: {telemetry.get('cpu', 'N/A')}")
-            print(f"RAM: {telemetry.get('ram', 'N/A')}")
-            print(f"VRAM: {telemetry.get('vram', 'N/A')}\n")
-    except Exception as e:
-        telemetry = {"error": str(e)}
+    telemetry = get_local_telemetry()
+    if "error" not in telemetry:
+        print(f"\n=== Hardware Telemetry ===")
+        print(f"RAM: {telemetry.get('ram', 'N/A')}")
+        print(f"VRAM: {telemetry.get('vram', 'N/A')}\n")
     
     results = {
         "model": "Qwen/Qwen3.6-27B",
