@@ -36,8 +36,15 @@ Every evaluation in this repository is organized into a dedicated, self-containe
 - **Runtime**: vLLM `0.22.0` + FlashInfer CUDA 13.1 JIT (`sm_120`)
 - **Key Finding**: Purpose-built agentic web model (GAIA 96.0, IFEval 94.8) delivering ~200 t/s decode for Tavily + Playwright browsing loops.
 
-### 6. ⚡ [a100_16gb_baseline](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/a100_16gb_baseline/README.md)
+### 6. 👑 [rtx_pro_6000_qwopus3.5_122b_nvfp4](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/rtx_pro_6000_qwopus3.5_122b_nvfp4/README.md)
+- **Hardware**: NVIDIA RTX PRO 6000 Blackwell (96GB VRAM, ~1,800 GB/s bandwidth)
+- **Model**: OpenYourMind Qwopus3.5 122B NVFP4 (True NVFP4 W4A4 MoE 122B, ~10B Active)
+- **Runtime**: vLLM `0.22.0` + FlashInfer CUDA 13.1 JIT (`sm_120`)
+- **Key Finding**: Distilled from Claude Opus 3.5 & Kimi K2.6; delivers ~200 t/s decode with 122B parameter reasoning depth.
+
+### 7. ⚡ [a100_16gb_baseline](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/a100_16gb_baseline/README.md)
 - **Hardware**: NVIDIA A100 Tensor Core GPU (16GB VRAM Slice)
 - **Model**: Baseline 7B/14B models
 - **Runtime**: vLLM serverless endpoint
+
 
