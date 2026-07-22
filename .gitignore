@@ -6,6 +6,7 @@ __pycache__/
 .DS_Store
 *.gguf
 scratch/
+modal_deployments/
 !results/**/*.json
 !devices_and_hardware/**/*.json
 docs/llm_experiments_study_guide.md
