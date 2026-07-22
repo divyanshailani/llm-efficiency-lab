@@ -1,0 +1,47 @@
+{
+  "model": "agents-a1-nvfp4",
+  "endpoint": "https://kartikchijwani-maker--agents-a1-nvfp4-node-serve.modal.run/v1",
+  "timestamp": "2026-07-22 14:30:38",
+  "sweeps": [
+    {
+      "target_context_length": 512,
+      "ttft_seconds": 735.0979,
+      "ingest_tokens_per_sec": 0.7,
+      "decode_tokens_per_sec": 168.42,
+      "output_tokens": 128,
+      "total_time_seconds": 735.858
+    },
+    {
+      "target_context_length": 2048,
+      "ttft_seconds": 3.6395,
+      "ingest_tokens_per_sec": 562.71,
+      "decode_tokens_per_sec": 199.29,
+      "output_tokens": 128,
+      "total_time_seconds": 4.2818
+    },
+    {
+      "target_context_length": 4096,
+      "ttft_seconds": 1.3183,
+      "ingest_tokens_per_sec": 3107.03,
+      "decode_tokens_per_sec": 166.13,
+      "output_tokens": 128,
+      "total_time_seconds": 2.0888
+    },
+    {
+      "target_context_length": 8192,
+      "ttft_seconds": 2.2946,
+      "ingest_tokens_per_sec": 3570.14,
+      "decode_tokens_per_sec": 164.29,
+      "output_tokens": 128,
+      "total_time_seconds": 3.0737
+    },
+    {
+      "target_context_length": 16384,
+      "ttft_seconds": 2.3153,
+      "ingest_tokens_per_sec": 7076.38,
+      "decode_tokens_per_sec": 160.31,
+      "output_tokens": 128,
+      "total_time_seconds": 3.1138
+    }
+  ]
+}
