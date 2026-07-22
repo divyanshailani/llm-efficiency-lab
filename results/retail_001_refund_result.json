@@ -1,0 +1,39 @@
+{
+    "task_id": "retail_001_refund",
+    "final_answer_or_patch": "Refund processed successfully.",
+    "tool_call_trajectory": [
+        {
+            "name": "process_refund",
+            "args": {
+                "order_id": "12345"
+            }
+        }
+    ],
+    "test_output": "PASS: Exact state match for policy 4B",
+    "failure_reason": null,
+    "telemetry": {
+        "measured_container_seconds": 1.2051091194152832,
+        "measured_inference_seconds": 1.2051091194152832,
+        "provider_billed_seconds": 2.8,
+        "estimated_gpu_cost": 0.000502128799756368,
+        "cold_start_seconds": 0.0,
+        "total_turns": 2,
+        "input_tokens": 2300,
+        "output_tokens": 240,
+        "gpu_type": "A100",
+        "gpu_count": 1
+    },
+    "configuration": {
+        "model_revision": "qwen2.5-32b-instruct",
+        "quantization": "fp16",
+        "vllm_version": "0.5.1",
+        "benchmark_commit": "main",
+        "adapter_version": "1.0",
+        "system_prompt_type": "standard_agentic",
+        "context_limit": 32768,
+        "temperature": 0.0,
+        "timeout_seconds": 600,
+        "gpu_type": "A100_80GB",
+        "date": "2026-07-21"
+    }
+}

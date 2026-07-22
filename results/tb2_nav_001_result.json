@@ -1,0 +1,39 @@
+{
+    "task_id": "tb2_nav_001",
+    "final_answer_or_patch": "Server successfully started on port 8080.",
+    "tool_call_trajectory": [
+        {
+            "name": "run_command",
+            "args": {
+                "cmd": "npm install"
+            }
+        }
+    ],
+    "test_output": "PASS: curl localhost:8080 returned 200 OK",
+    "failure_reason": null,
+    "telemetry": {
+        "measured_container_seconds": 1.5050818920135498,
+        "measured_inference_seconds": 1.5050818920135498,
+        "provider_billed_seconds": 3.2,
+        "estimated_gpu_cost": 0.0006271174550056457,
+        "cold_start_seconds": 0.0,
+        "total_turns": 3,
+        "input_tokens": 3600,
+        "output_tokens": 190,
+        "gpu_type": "A100",
+        "gpu_count": 1
+    },
+    "configuration": {
+        "model_revision": "qwen2.5-32b-instruct",
+        "quantization": "fp16",
+        "vllm_version": "0.5.1",
+        "benchmark_commit": "main",
+        "adapter_version": "1.0",
+        "system_prompt_type": "standard_agentic",
+        "context_limit": 32768,
+        "temperature": 0.0,
+        "timeout_seconds": 600,
+        "gpu_type": "A100_80GB",
+        "date": "2026-07-21"
+    }
+}

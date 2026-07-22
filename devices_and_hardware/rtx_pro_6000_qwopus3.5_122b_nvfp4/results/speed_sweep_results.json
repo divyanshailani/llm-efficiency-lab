@@ -1,0 +1,27 @@
+{
+  "model": "qwopus3.5-122b-nvfp4",
+  "endpoint": "https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1",
+  "timestamp": "2026-07-22 17:21:31",
+  "sweeps": [
+    {
+      "target_context_length": 512,
+      "error": "500 Server Error: Internal Server Error for url: https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1/chat/completions?__modal_attempt_token=eyJhbGciOiJIUzI1NiIsImtpZCI6IjIwMjQtMDItMjYiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3ODU5MzA2OTEsIm5iZiI6MTc4NDcyMTA5MSwiaWF0IjoxNzg0NzIxMDkxLCJlbnRyeV9pZCI6IjE3ODQ3MjEwOTE5ODgtMCIsImZ1bmN0aW9uX2lkIjoiZnUtVVJ2MEh4SG96RkE0N2ZoMmRYS0RFTiIsImlucHV0X2lkIjoiaW4tMDFLWTRUTkJDS0ZYTTlGUU5CREdDTTMxSksiLCJyZXRyeV9jdCI6MCwiZnVuY3Rpb25fY2FsbF9pZCI6ImZjLTAxS1k0VE5CQ0c4U05HRzU1UDJTV003N0tEIn0.EE8NYbHstogxK8v-e13xhwUuKc3VVz-D_MB-p3s3E28"
+    },
+    {
+      "target_context_length": 2048,
+      "error": "404 Client Error: Not Found for url: https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1/chat/completions"
+    },
+    {
+      "target_context_length": 4096,
+      "error": "404 Client Error: Not Found for url: https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1/chat/completions"
+    },
+    {
+      "target_context_length": 8192,
+      "error": "404 Client Error: Not Found for url: https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1/chat/completions"
+    },
+    {
+      "target_context_length": 16384,
+      "error": "404 Client Error: Not Found for url: https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1/chat/completions"
+    }
+  ]
+}

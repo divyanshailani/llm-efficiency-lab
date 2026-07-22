@@ -1,0 +1,39 @@
+{
+    "task_id": "sympy__sympy-13177",
+    "final_answer_or_patch": "diff --git a/test.py b/test.py\n+ # fixed bug",
+    "tool_call_trajectory": [
+        {
+            "name": "read_file",
+            "args": {
+                "path": "test.py"
+            }
+        }
+    ],
+    "test_output": "PASS: 15/15 tests passed",
+    "failure_reason": null,
+    "telemetry": {
+        "measured_container_seconds": 2.505147933959961,
+        "measured_inference_seconds": 2.505147933959961,
+        "provider_billed_seconds": 5.0,
+        "estimated_gpu_cost": 0.0010438116391499838,
+        "cold_start_seconds": 0.0,
+        "total_turns": 2,
+        "input_tokens": 31000,
+        "output_tokens": 1200,
+        "gpu_type": "A100",
+        "gpu_count": 1
+    },
+    "configuration": {
+        "model_revision": "qwen2.5-32b-instruct",
+        "quantization": "fp16",
+        "vllm_version": "0.5.1",
+        "benchmark_commit": "main",
+        "adapter_version": "1.0",
+        "system_prompt_type": "standard_agentic",
+        "context_limit": 32768,
+        "temperature": 0.0,
+        "timeout_seconds": 600,
+        "gpu_type": "A100_80GB",
+        "date": "2026-07-21"
+    }
+}

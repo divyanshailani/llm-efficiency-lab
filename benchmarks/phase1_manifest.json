@@ -1,0 +1,24 @@
+{
+    "terminal_bench_2": [
+        "tb2_nav_001",
+        "tb2_grep_004",
+        "tb2_git_012",
+        "tb2_pip_002"
+    ],
+    "swe_bench_pro": [
+        "sympy__sympy-13177",
+        "django__django-11099",
+        "scikit-learn__scikit-learn-13496"
+    ],
+    "tau_bench": [
+        "retail_001_refund",
+        "airline_003_upgrade",
+        "retail_014_exchange"
+    ],
+    "gpqa_diamond": [
+        "gpqa_chem_001",
+        "gpqa_phys_042",
+        "gpqa_bio_019",
+        "gpqa_math_007"
+    ]
+}
