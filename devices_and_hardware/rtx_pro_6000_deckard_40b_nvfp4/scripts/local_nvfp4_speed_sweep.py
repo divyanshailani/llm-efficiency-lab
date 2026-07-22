@@ -4,7 +4,7 @@ import statistics
 import json
 
 # Adjust this URL to match your exact Modal deployment URL once it's live
-BASE_URL = "https://fittypie126--deckard-nvfp4-node-serve.modal.run/v1/chat/completions"
+BASE_URL = "http://localhost:8000/v1/chat/completions"
 MODEL = "deckard-40b-nvfp4"
 CONTEXT_SIZES = [512, 2048, 4096, 8192, 16384, 32768] # Pushing up to 32K context to test the 50GB VRAM headroom
 

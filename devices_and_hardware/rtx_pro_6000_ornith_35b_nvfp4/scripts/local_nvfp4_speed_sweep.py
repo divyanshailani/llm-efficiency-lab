@@ -4,7 +4,7 @@ import time
 import statistics
 import json
 
-BASE_URL = "https://kartikchijwani-maker--ornith-nvfp4-node-serve.modal.run/v1/chat/completions"
+BASE_URL = "http://localhost:8000/v1/chat/completions"
 MODEL = "ornith-1.0-35b-nvfp4"
 CONTEXT_SIZES = [512, 2048, 4096, 8192, 16384]
 

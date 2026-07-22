@@ -14,7 +14,7 @@ import json
 import argparse
 import requests
 
-DEFAULT_ENDPOINT = "https://kartikchijwani-maker--agents-a1-nvfp4-node-serve.modal.run/v1"
+DEFAULT_ENDPOINT = "http://localhost:8000/v1"
 MODEL_NAME = "agents-a1-nvfp4"
 
 CONTEXT_TEST_SIZES = [512, 2048, 4096, 8192, 16384]

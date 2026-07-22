@@ -1,6 +1,6 @@
 {
   "model": "agents-a1-nvfp4",
-  "endpoint": "https://kartikchijwani-maker--agents-a1-nvfp4-node-serve.modal.run/v1",
+  "endpoint": "http://localhost:8000/v1",
   "timestamp": "2026-07-22 14:43:24",
   "survival_score": "5/6 (83.3%)",
   "gates": [

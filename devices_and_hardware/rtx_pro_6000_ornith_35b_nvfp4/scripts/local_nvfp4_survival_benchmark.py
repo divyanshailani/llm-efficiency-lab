@@ -3,7 +3,7 @@ import requests
 import json
 import time
 
-BASE_URL = "https://kartikchijwani-maker--ornith-nvfp4-node-serve.modal.run/v1/chat/completions"
+BASE_URL = "http://localhost:8000/v1/chat/completions"
 MODEL = "ornith-1.0-35b-nvfp4"
 
 def query_model(prompt, temperature=0.0, max_tokens=1024):

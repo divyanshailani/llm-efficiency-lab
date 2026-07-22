@@ -19,7 +19,7 @@ import json
 import argparse
 import requests
 
-DEFAULT_ENDPOINT = "https://kartikchijwani-maker--agents-a1-nvfp4-node-serve.modal.run/v1"
+DEFAULT_ENDPOINT = "http://localhost:8000/v1"
 MODEL_NAME = "agents-a1-nvfp4"
 
 def test_tool_calling(base_url, headers):

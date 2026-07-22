@@ -14,7 +14,7 @@ import json
 import argparse
 import requests
 
-DEFAULT_ENDPOINT = "https://fittypie126--qwopus3-5-122b-nvfp4-node-serve.modal.run/v1"
+DEFAULT_ENDPOINT = "http://localhost:8000/v1"
 MODEL_NAME = "qwopus3.5-122b-nvfp4"
 
 CONTEXT_TEST_SIZES = [512, 2048, 4096, 8192, 16384]
