@@ -1,0 +1,55 @@
+{
+  "model": "laguna-s-21-nvfp4",
+  "endpoint": "http://localhost:8000/v1",
+  "timestamp": "2026-07-22 23:38:32",
+  "total_passed": "2/5 (40.0%)",
+  "total_latency_seconds": 834.462,
+  "tests": [
+    {
+      "test_name": "1. Common-sense trap (car wash)",
+      "prompt": "I am 100m from the car wash. Should I walk there or drive my car?\nAnswer in one sentence only.",
+      "response": "</think>Walk, since the distance is short enough that driving would likely take more time due to parking and starting the car.",
+      "latency_seconds": 824.4264,
+      "completion_tokens": 25,
+      "status": "FAILED",
+      "reason": "Recommended walking without taking the car"
+    },
+    {
+      "test_name": "2. Strict JSON / no reasoning leakage",
+      "prompt": "Return only valid JSON. No explanation. No markdown.\n{\"answer\": \"drive\" or \"walk\", \"reason\": \"...\"}\nQuestion: I am 100m from the car wash. Should I walk there or drive my car?",
+      "response": "Okay, let's see. The user is 100 meters away from the car wash and is wondering whether to walk or drive. Hmm. First, I need to consider the distance. 100 meters is pretty short, right? Like, a tenth of a kilometer. Walking that distance would take maybe a minute or two. But if they have a car, driving might be faster, but maybe not by much.\n\nWait, but if they're already at the car, maybe they need to drive to the car wash. But if they're 100 meters away from the car wash, maybe they're already at their car? Or are they at a different location? The question is a bit ambiguous. Let me re",
+      "latency_seconds": 1.8581,
+      "completion_tokens": 150,
+      "status": "FAILED",
+      "reason": "Invalid JSON output",
+      "parsed_json": null
+    },
+    {
+      "test_name": "3. Simple tool-use logic",
+      "prompt": "You have a tool: get_weather(city).\nUser asks: \"Should I walk 100m to the car wash or drive?\"\nDo you need to call a tool? Reply JSON only:\n{\"tool_call\": true/false, \"tool\": \"...\", \"reason\": \"...\"}",
+      "response": "</think>{\"tool_call\": true, \"tool\": \"get_weather\", \"reason\": \"The user is deciding between walking 100m to the car wash or driving. Weather conditions (e.g., rain, extreme heat) could influence this decision, so checking the current weather for the user's location is necessary to provide a relevant recommendation.\"}",
+      "latency_seconds": 1.5173,
+      "completion_tokens": 72,
+      "status": "FAILED",
+      "reason": "Incorrectly requested unnecessary tool call"
+    },
+    {
+      "test_name": "4. Hard practical Python test",
+      "prompt": "Fix and harden this Python function. Return only a unified diff patch.\n\nRequirements:\n- handle empty input\n- handle malformed rows\n- add retries with exponential backoff\n- do not block event loop\n- preserve public API\n\nimport time\nimport requests\n\ndef fetch_status(urls):\n    results = []\n    for url in urls:\n        r = requests.get(url)\n        results.append((url, r.status_code))\n    return results",
+      "response": "</think>```diff\n--- a/original.py\n+++ b/original.py\n@@ -1,8 +1,37 @@\n-import time\n-import requests\n+import asyncio\n+import logging\n+import random\n+from typing import List, Tuple, Any\n+\n+import requests\n+from requests.adapters import HTTPAdapter\n+from urllib3.util.retry import Retry\n+\n+logger = logging.getLogger(__name__)\n+\n+_DEFAULT_RETRIES = 3\n+_DEFAULT_BACKOFF_FACTOR = 0.3\n+_DEFAULT_TIMEOUT = 10\n+\n+\n+def _build_session(retries: int, backoff_factor: float) -> requests.Session:\n+    session = requests.Session()\n+    retry = Retry(\n+        total=retries,\n+        read=retries,\n+        connect=retries,\n+        backoff_factor=backoff_factor,\n+        status_forcelist=(500, 502, 503, 504),\n+    )\n+    adapter = HTTPAdapter(max_retries=retry)\n+    session.mount(\"http://\", adapter)\n+    session.mount(\"https://\", adapter)\n+    return session\n+\n+\n+_session = _build_session(_DEFAULT_RETRIES, _DEFAULT_BACKOFF_FACTOR)\n \n-def fetch_status(urls):\n+def fetch_status(urls: List[str]) -> List[Tuple[str, Any]]:\n+    if not urls:\n+        return []\n+\n+    loop = asyncio.get_event_loop()\n+    return loop.run_until_complete(_fetch_status_async(urls))\n+\n+\n+async def _fetch_status_async(urls: List[str]) -> List[Tuple[str, Any]]:\n+    tasks = [asyncio.ensure_future(_fetch_one(url)) for url in urls]\n+    return await asyncio.gather(*tasks)\n+\n+\n+async def _fetch_one(url: str) -> Tuple[str, Any]:\n+    if not isinstance(url, str) or not url.strip():\n+        return (url, None)\n+\n+    try:\n+        response = await asyncio.to_thread(\n+            _session.get, url, timeout=_DEFAULT_TIMEOUT\n+        )\n+        return (url, response.status_code)\n+    except Exception as e:\n+",
+      "latency_seconds": 3.8298,
+      "completion_tokens": 500,
+      "status": "PASSED",
+      "reason": "Valid unified diff with non-blocking retries and hardening"
+    },
+    {
+      "test_name": "5. Hard DSA test (LRU Cache)",
+      "prompt": "Implement an LRU cache in Python with O(1) get/put.\nReturn only code, no explanation.",
+      "response": "</think>```python\nclass LRUCache:\n    class Node:\n        def __init__(self, key=0, value=0):\n            self.key = key\n            self.value = value\n            self.prev = None\n            self.next = None\n\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.cache = {}\n        self.head = self.Node()\n        self.tail = self.Node()\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node):\n        prev, nxt = node.prev, node.next\n        prev.next = nxt\n        nxt.prev = prev\n\n    def _add(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        self.head.next.prev = node\n        self.head.next = node\n\n    def get(self, key: int) -> int:\n        if key in self.cache:\n            node = self.cache[key]\n            self._remove(node)\n            self._add(node)\n            return node.value\n        return -1\n\n    def put(self, key: int, value: int) -> None:\n        if key in self.cache:\n            self._remove(self.cache[key])\n        node = self.Node(key, value)\n        self.cache[key] = node\n        self._add(node)\n        if len(self.cache) > self.capacity:\n            lru = self.tail.prev\n            self._remove(lru)\n            del self.cache[lru.key]\n```",
+      "latency_seconds": 2.8305,
+      "completion_tokens": 329,
+      "status": "PASSED",
+      "reason": "Valid O(1) LRU cache implementation"
+    }
+  ]
+}

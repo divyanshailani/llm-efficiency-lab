@@ -21,6 +21,7 @@ This directory contains the public, generic hardware-paired benchmarking suite f
 - **Peak Ingestion Speed**: **7,915.69 tokens/sec** at 16,384 context
 - **TTFT (Time to First Token)**: **1.08s** at 2K context, **2.07s** at 16K context
 - **6-Gate Survival Score**: **4 / 6 PASSED (66.7%)**
+- **5-Gate Custom Reasoning Score**: **2 / 5 PASSED (40.0%)** (Passes hard async/retry unified diff code patch and O(1) LRU Cache DSA)
 
 ---
 
@@ -42,6 +43,14 @@ python3 devices_and_hardware/b200_laguna_s_21_nvfp4/scripts/local_nvfp4_survival
   --output "devices_and_hardware/b200_laguna_s_21_nvfp4/results/survival_results.json"
 ```
 
+### 3. 5-Gate Custom Reasoning & Code Hardening Eval
+Run custom 5-gate reasoning test (Car wash trap, Strict JSON, Tool logic, Hard Python diff patch, O(1) LRU Cache):
+```bash
+python3 devices_and_hardware/b200_laguna_s_21_nvfp4/scripts/local_nvfp4_5_gate_eval.py \
+  --endpoint "http://localhost:8000/v1" \
+  --output "devices_and_hardware/b200_laguna_s_21_nvfp4/results/eval_5_gate_results.json"
+```
+
 ---
 
 ## 📁 Directory Structure
@@ -50,8 +59,10 @@ b200_laguna_s_21_nvfp4/
 ├── README.md
 ├── scripts/
 │   ├── local_nvfp4_speed_sweep.py
-│   └── local_nvfp4_survival_benchmark.py
+│   ├── local_nvfp4_survival_benchmark.py
+│   └── local_nvfp4_5_gate_eval.py
 └── results/
     ├── speed_sweep_results.json
-    └── survival_results.json
+    ├── survival_results.json
+    └── eval_5_gate_results.json
 ```
