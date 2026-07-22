@@ -75,3 +75,33 @@ We deployed the **Deckard 40B NVFP4** model on a single **NVIDIA RTX PRO 6000 Bl
 
 3. **Ingestion Parallelism**:
    - Ingestion (Prompt Processing) scales linearly up to **4,374.75 tokens/sec** at 16K context because pre-filling matrix multiplications heavily utilize Blackwell's tensor cores.
+
+---
+
+## 🏆 Ornith 1.0 35B NVFP4 MoE (MoE Speed & Quality Champion)
+
+We deployed **`sakamakismile/Ornith-1.0-35B-NVFP4`** (True NVFP4 W4A4 Mixture-of-Experts) on the **NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)** serverless node on Modal using `vLLM` + `FlashInfer`.
+
+### Speed Sweep Benchmark (Modal Endpoint API)
+
+| Context Size | Ingestion Speed (TTFT) | Single-User Decode Speed | TTFT (s) |
+|--------------|------------------------|--------------------------|----------|
+| **512 tokens** | **509.73 t/s** | **189.90 t/s** | **1.044s** |
+| **2,048 tokens** | **1,819.80 t/s** | **192.13 t/s** | **1.133s** |
+| **4,096 tokens** | **2,375.36 t/s** | **190.92 t/s** | **1.731s** |
+| **8,192 tokens** | **5,992.20 t/s** | **191.24 t/s** | **1.370s** |
+| **16,384 tokens** | **8,970.23 t/s** | **200.65 t/s** | **1.828s** |
+
+### Survival Quality Scorecard: 6/6 GATES PASSED (100%)
+- ✅ **1. Tool Calling (JSON Check)**: PASSED
+- ✅ **2. Schema Validity**: PASSED
+- ✅ **3. State Tracking (Normalized)**: PASSED
+- ✅ **4. Executable Debugging**: PASSED
+- ✅ **5. Edit-Plan Follow-Through**: PASSED
+- ✅ **6. Long-Context Recall (4K Needle)**: PASSED (Recalled `ORNITH_MOE_BLACKWELL_2026` cleanly)
+
+### MoE Speed Mechanics
+- **Active Weight Read per Token**: Only 8 active experts per token out of 256 total experts (~6.5 GB active parameters).
+- **Decode Speed**: Reaches **~200 tokens/sec** (**6x faster** than dense 40B models!).
+- **Bandwidth Saturation**: $\frac{1800 \text{ GB/s}}{6.5 \text{ GB}} \approx 276 \text{ t/s}$ theoretical limit. Measured **~200 t/s** represents **~72% memory bandwidth utilization**.
+
