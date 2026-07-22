@@ -5,7 +5,8 @@ __pycache__/
 .agents/
 .DS_Store
 *.gguf
-*.json
+scratch/
+!results/**/*.json
 !devices_and_hardware/**/*.json
 docs/llm_experiments_study_guide.md
 models/

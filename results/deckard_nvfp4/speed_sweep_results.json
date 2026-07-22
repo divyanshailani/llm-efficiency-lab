@@ -1,0 +1,32 @@
+[
+  {
+    "context_target": 512,
+    "ttft_median": 1.0827901363372803,
+    "ingest_median": 491.3232787653381,
+    "decode_median": 31.153192591881222
+  },
+  {
+    "context_target": 2048,
+    "ttft_median": 1.128021001815796,
+    "ingest_median": 1827.9801499092314,
+    "decode_median": 31.080696087846253
+  },
+  {
+    "context_target": 4096,
+    "ttft_median": 1.7248899936676025,
+    "ingest_median": 2383.9201427893545,
+    "decode_median": 31.597751135247055
+  },
+  {
+    "context_target": 8192,
+    "ttft_median": 1.4585716724395752,
+    "ingest_median": 5630.165562083615,
+    "decode_median": 30.546752890292467
+  },
+  {
+    "context_target": 16384,
+    "ttft_median": 1.778355360031128,
+    "ingest_median": 9223.128497620915,
+    "decode_median": 29.943881155895323
+  }
+]
