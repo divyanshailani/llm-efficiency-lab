@@ -8,6 +8,7 @@ __pycache__/
 scratch/
 modal_deployments/
 benchmarks/
+AGENTS.md
 !results/**/*.json
 !devices_and_hardware/**/*.json
 docs/llm_experiments_study_guide.md
