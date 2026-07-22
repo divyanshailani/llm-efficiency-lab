@@ -1,16 +1,10 @@
-# local_nvfp4_survival_benchmark.py
-# Generic public tester script to run the 6-gate survival quality benchmark on any OpenAI-compatible vLLM endpoint.
+# ornith_survival_benchmark.py
 import requests
 import json
-import argparse
+import time
 
-parser = argparse.ArgumentParser(description="6-gate survival benchmark for local NVFP4 vLLM / SGLang endpoint.")
-parser.add_argument("--url", type=str, default="http://localhost:8000/v1/chat/completions", help="Endpoint URL")
-parser.add_argument("--model", type=str, default="ornith-1.0-35b-nvfp4", help="Model name")
-args = parser.parse_args()
-
-BASE_URL = args.url
-MODEL = args.model
+BASE_URL = "https://kartikchijwani-maker--ornith-nvfp4-node-serve.modal.run/v1/chat/completions"
+MODEL = "ornith-1.0-35b-nvfp4"
 
 def query_model(prompt, temperature=0.0, max_tokens=1024):
     payload = {
@@ -20,11 +14,17 @@ def query_model(prompt, temperature=0.0, max_tokens=1024):
         "max_tokens": max_tokens
     }
     try:
-        res = requests.post(BASE_URL, json=payload, timeout=60)
+        res = requests.post(BASE_URL, json=payload, timeout=120)
         res.raise_for_status()
         data = res.json()
         raw_text = data['choices'][0]['message']['content'] or ""
-        clean_text = raw_text.split("</think>")[-1].strip() if "</think>" in raw_text else raw_text.strip()
+        
+        # Isolate response from reasoning <think> blocks if present
+        if "</think>" in raw_text:
+            clean_text = raw_text.split("</think>")[-1].strip()
+        else:
+            clean_text = raw_text.strip()
+            
         return clean_text, raw_text
     except Exception as e:
         print(f"[ERROR] API Call Failed: {e}")
@@ -38,6 +38,7 @@ def test_gate_1_tool_calling():
     )
     clean, _ = query_model(prompt)
     try:
+        # Extract json if wrapped in ```json ... ```
         if "```json" in clean:
             clean = clean.split("```json")[1].split("```")[0].strip()
         elif "```" in clean:
@@ -51,7 +52,7 @@ def test_gate_1_tool_calling():
             print(f"❌ Gate 1 FAILED: Unexpected structure -> {clean}")
             return False
     except Exception as e:
-        print(f"❌ Gate 1 FAILED: Could not parse JSON -> {e}")
+        print(f"❌ Gate 1 FAILED: Could not parse JSON -> {e} | Text: {clean}")
         return False
 
 def test_gate_2_schema_validity():
@@ -70,7 +71,7 @@ def test_gate_2_schema_validity():
             print(f"❌ Gate 2 FAILED: Schema mismatch -> {clean}")
             return False
     except Exception as e:
-        print(f"❌ Gate 2 FAILED: JSON parse error -> {e}")
+        print(f"❌ Gate 2 FAILED: JSON parse error -> {e} | Text: {clean}")
         return False
 
 def test_gate_3_state_tracking():
@@ -127,18 +128,35 @@ def test_gate_6_needle_recall_4k():
         print("✅ Gate 6 PASSED: 4K Needle successfully recalled!")
         return True
     else:
-        print(f"❌ Gate 6 FAILED: Secret passcode missed.")
+        print(f"❌ Gate 6 FAILED: Secret passcode missed -> Raw response: {raw[:200]}")
         return False
 
 def run_survival_suite():
     print("=========================================================")
-    print("      NVFP4 MODEL SURVIVAL BENCHMARK (6 GATES)           ")
+    print("   ORNITH 35B NVFP4 MoE: SURVIVAL BENCHMARK (6 GATES)    ")
     print("=========================================================")
-    gates = [test_gate_1_tool_calling, test_gate_2_schema_validity, test_gate_3_state_tracking, test_gate_4_executable_debugging, test_gate_5_edit_plan_follow_through, test_gate_6_needle_recall_4k]
-    passed = sum(1 for g in gates if g())
+    
+    gates = [
+        test_gate_1_tool_calling,
+        test_gate_2_schema_validity,
+        test_gate_3_state_tracking,
+        test_gate_4_executable_debugging,
+        test_gate_5_edit_plan_follow_through,
+        test_gate_6_needle_recall_4k
+    ]
+    
+    passed = 0
+    for idx, gate in enumerate(gates, 1):
+        if gate():
+            passed += 1
+            
     print("\n=========================================================")
     print(f"   FINAL SCORECARD: {passed}/{len(gates)} GATES PASSED")
     print("=========================================================")
+    
+    res_data = {"scorecard": f"{passed}/{len(gates)}", "passed_count": passed, "total": len(gates)}
+    with open("ornith_survival_results.json", "w") as f:
+        json.dump(res_data, f, indent=2)
 
 if __name__ == "__main__":
     run_survival_suite()

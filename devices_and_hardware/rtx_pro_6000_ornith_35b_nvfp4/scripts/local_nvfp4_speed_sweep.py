@@ -1,40 +1,33 @@
-# local_nvfp4_speed_sweep.py
-# Generic public tester script to benchmark any local OpenAI-compatible vLLM / SGLang NVFP4 endpoint.
+# ornith_speed_sweep.py
 import requests
 import time
 import statistics
 import json
-import argparse
 
-parser = argparse.ArgumentParser(description="Speed sweep test for local NVFP4 vLLM / SGLang endpoint.")
-parser.add_argument("--url", type=str, default="http://localhost:8000/v1/chat/completions", help="Endpoint URL")
-parser.add_argument("--model", type=str, default="ornith-1.0-35b-nvfp4", help="Model name")
-args = parser.parse_args()
-
-BASE_URL = args.url
-MODEL = args.model
+BASE_URL = "https://kartikchijwani-maker--ornith-nvfp4-node-serve.modal.run/v1/chat/completions"
+MODEL = "ornith-1.0-35b-nvfp4"
 CONTEXT_SIZES = [512, 2048, 4096, 8192, 16384]
 
 def generate_context(target_tokens):
-    repeats = target_tokens // 10
+    approx_tokens_per_repeat = 10
+    repeats = target_tokens // approx_tokens_per_repeat
     base_phrase = "The quick brown fox jumps over the lazy dog. "
     return (base_phrase * repeats) + "\n\nSummarize the text above in exactly one sentence."
 
 def run_sweep():
-    print(f"=== NVFP4 Speed Sweep (Targeting: {BASE_URL}) ===")
+    print("=== Rigorous Context Size Sweep (Ornith 35B NVFP4 MoE on Blackwell 96GB) ===")
     
-    print("\n[Waking up container and loading weights...]")
+    print("\n[Waking up container and loading weights to VRAM...]")
     try:
         resp = requests.post(
             BASE_URL,
             json={"model": MODEL, "messages": [{"role": "user", "content": "hello"}], "max_tokens": 1},
-            timeout=60,
+            timeout=600,
         )
         resp.raise_for_status()
         print("[Warmup complete! Commencing benchmark sweep...]")
     except Exception as e:
         print(f"[ERROR] Warmup failed: {e}")
-        return
         
     results = []
     
@@ -50,16 +43,19 @@ def run_sweep():
             "temperature": 0.0,
         }
         
-        ttfts, ingest_speeds, decode_speeds = [], [], []
+        ttfts = []
+        ingest_speeds = []
+        decode_speeds = []
         
         for iteration in range(3):
             try:
                 start_time = time.time()
-                resp = requests.post(BASE_URL, json=payload, stream=True, timeout=120)
+                resp = requests.post(BASE_URL, json=payload, stream=True, timeout=600)
                 resp.raise_for_status()
                 
                 ttft = None
-                prompt_tokens, completion_tokens = 0, 0
+                prompt_tokens = 0
+                completion_tokens = 0
                 
                 for line in resp.iter_lines():
                     if line:
@@ -87,10 +83,12 @@ def run_sweep():
                 total_time = end_time - start_time
                 decode_time = total_time - ttft if ttft else 0
                 
+                approx_warning = ""
                 if prompt_tokens == 0:
                     prompt_tokens = int(len(prompt) / 4)
+                    approx_warning = " (Approx Tokens)"
                 if completion_tokens == 0:
-                    completion_tokens = 128
+                    completion_tokens = 128 
                 
                 ingest_speed = prompt_tokens / ttft if ttft and ttft > 0 else 0
                 decode_speed = completion_tokens / decode_time if decode_time and decode_time > 0 else 0
@@ -99,7 +97,7 @@ def run_sweep():
                 ingest_speeds.append(ingest_speed)
                 decode_speeds.append(decode_speed)
                 
-                print(f"  Iter {iteration+1} - TTFT: {ttft or 0.0:.3f}s | Ingest: {ingest_speed:.2f} t/s | Decode: {decode_speed:.2f} t/s")
+                print(f"  Iter {iteration+1} - TTFT: {ttft or 0.0:.3f}s | Ingest: {ingest_speed:.2f} t/s{approx_warning} | Decode: {decode_speed:.2f} t/s")
                 
             except Exception as e:
                 print(f"  [ERROR] Iteration {iteration+1} failed: {e}")
@@ -122,6 +120,9 @@ def run_sweep():
     print("|-----------------------|------------------|---------------------|-------------|")
     for r in results:
         print(f"| {r['context_target']} | {r['ingest_median']:.2f} t/s | {r['decode_median']:.2f} t/s | {r['ttft_median']:.3f}s |")
+    
+    with open("ornith_speed_sweep_results.json", "w") as f:
+        json.dump(results, f, indent=2)
 
 if __name__ == "__main__":
     run_sweep()

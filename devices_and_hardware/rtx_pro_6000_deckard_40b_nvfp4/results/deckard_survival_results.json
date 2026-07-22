@@ -1,0 +1,13 @@
+{
+  "model": "deckard-40b-q8",
+  "score": 5,
+  "total": 6,
+  "tests": {
+    "tool_json": true,
+    "schema_validity": true,
+    "state_tracking": true,
+    "debugging": true,
+    "edit_plan": true,
+    "long_context_4k": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "model": "Qwen/Qwen3.6-27B",
+  "score": 3,
+  "total": 6,
+  "tests": {
+    "tool_json": false,
+    "schema_validity": false,
+    "state_tracking": true,
+    "debugging": true,
+    "edit_plan": false,
+    "long_context_4k": true
+  },
+  "telemetry": {
+    "cpu": "unknown (1 Cores)",
+    "ram": "5512MB / 886357MB",
+    "vram": "68569MB / 81920MB (0% util)",
+    "timestamp": 1784571326.5944912
+  }
+}
