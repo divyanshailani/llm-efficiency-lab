@@ -3,7 +3,7 @@ import subprocess
 import json
 import modal
 
-app = modal.App("liquid-lfm-q8-llama-bench")
+app = modal.App()
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -15,8 +15,6 @@ image = (
     .pip_install("huggingface_hub>=0.28.0")
 )
 
-hf_volume = modal.Volume.from_name("lfm-hf-cache", create_if_missing=True)
-
 REPO_ID   = "LiquidAI/LFM2.5-2.6B-GGUF"
 GGUF_FILE = "LFM2.5-2.6B-Q8_0.gguf"
 
@@ -27,10 +25,8 @@ GGUF_FILE = "LFM2.5-2.6B-Q8_0.gguf"
     timeout=1200,
     retries=0,
     memory=16384,
-    volumes={"/root/.cache/huggingface": hf_volume},
 )
 def run_bench():
-    hf_secret = modal.Secret.from_name("hf-token-secret")
     from huggingface_hub import HfFileSystem
     hf_token = os.environ.get("HF_TOKEN")
 

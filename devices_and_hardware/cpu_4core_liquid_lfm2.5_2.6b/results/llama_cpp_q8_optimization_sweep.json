@@ -1,0 +1,137 @@
+{
+  "experiment": {
+    "model": "LiquidAI/LFM2.5-2.6B-GGUF",
+    "file": "LFM2.5-2.6B-Q8_0.gguf",
+    "runtime": "llama.cpp",
+    "build": {
+      "ggml_native": false,
+      "openmp": true
+    },
+    "cpu_threads": 16,
+    "memory_mb": 16384,
+    "prompt_lengths": [128, 512],
+    "generated_tokens": 8,
+    "repetitions": 1,
+    "metrics": {
+      "pp": "prompt processing tokens per second",
+      "tg": "token generation tokens per second"
+    },
+    "measurement_note": "Single-repetition smoke benchmark. Small differences should not be treated as conclusive without repeated runs."
+  },
+  "results": [
+    {
+      "variant": "t16_b512_fa0",
+      "setting": "reference configuration",
+      "threads": 16,
+      "batch_size": 2048,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.430546,
+      "tg_8_tps": 24.811838
+    },
+    {
+      "variant": "t16_b128_fa0",
+      "setting": "batch size 128",
+      "threads": 16,
+      "batch_size": 128,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.190979,
+      "tg_8_tps": 25.551926
+    },
+    {
+      "variant": "t16_b256_fa0",
+      "setting": "batch size 256",
+      "threads": 16,
+      "batch_size": 256,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.30111,
+      "tg_8_tps": 25.415788
+    },
+    {
+      "variant": "t16_b1024_fa0",
+      "setting": "batch size 1024",
+      "threads": 16,
+      "batch_size": 1024,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.540579,
+      "tg_8_tps": 24.72132
+    },
+    {
+      "variant": "t16_b512_fa1",
+      "setting": "flash attention on",
+      "threads": 16,
+      "batch_size": 2048,
+      "flash_attention": "on",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.558277,
+      "tg_8_tps": 25.388274
+    },
+    {
+      "variant": "t16_b512_fa0_explicit",
+      "setting": "flash attention off",
+      "threads": 16,
+      "batch_size": 2048,
+      "flash_attention": "off",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 43.545939,
+      "tg_8_tps": 24.284047
+    },
+    {
+      "variant": "t16_b512_fa0_nommap",
+      "setting": "memory mapping disabled",
+      "threads": 16,
+      "batch_size": 2048,
+      "flash_attention": "auto",
+      "memory_mapping": false,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.752353,
+      "tg_8_tps": 26.571025
+    },
+    {
+      "variant": "t16_b512_q8kv",
+      "setting": "Q8 K/V cache",
+      "threads": 16,
+      "batch_size": 2048,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "q8_0",
+      "pp_512_tps": 44.912496,
+      "tg_8_tps": 25.008034
+    },
+    {
+      "variant": "t8_b512_fa0",
+      "setting": "8-thread override",
+      "threads": 8,
+      "batch_size": 2048,
+      "flash_attention": "auto",
+      "memory_mapping": true,
+      "kv_cache": "f16",
+      "pp_512_tps": 44.457148,
+      "tg_8_tps": 22.535078
+    }
+  ],
+  "summary": {
+    "reference_pp_512_tps": 44.430546,
+    "reference_tg_8_tps": 24.811838,
+    "best_pp_512": {
+      "variant": "t16_b512_q8kv",
+      "tokens_per_second": 44.912496,
+      "change_vs_reference_percent": 1.084
+    },
+    "best_tg_8": {
+      "variant": "t16_b512_fa0_nommap",
+      "tokens_per_second": 26.571025,
+      "change_vs_reference_percent": 7.089
+    },
+    "conclusion": "No robust prefill breakthrough was found. Batch size and Flash Attention changes were near baseline. The memory-mapping-disabled decode result was the strongest single-run improvement, but requires repeated measurements before being treated as a confirmed optimization. Eight threads reduced decode throughput materially."
+  }
+}

@@ -9,7 +9,7 @@ Usage:
 """
 import os, subprocess, json, modal
 
-app = modal.App("liquid-lfm-q8-sweep")
+app = modal.App()
 
 # ── Image: same native build as baseline ──────────────────────────────────────
 image = (
@@ -21,9 +21,6 @@ image = (
     )
     .pip_install("huggingface_hub>=0.28.0")
 )
-
-hf_volume = modal.Volume.from_name("lfm-hf-cache", create_if_missing=True)
-
 
 REPO_ID    = "LiquidAI/LFM2.5-2.6B-GGUF"
 GGUF_FILE  = "LFM2.5-2.6B-Q8_0.gguf"
@@ -89,7 +86,6 @@ VARIANTS = [
 @app.function(
     image=image, cpu=16.0, timeout=600, retries=0,
     memory=16384,
-    volumes={"/root/.cache/huggingface": hf_volume},
 )
 def run_sweep():
     results = []
