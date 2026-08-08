@@ -1,7 +1,8 @@
 {
   "hardware_configuration": {
-    "device": "8-Core CPU Hardware Node",
-    "allocated_cores": 8,
+    "device": "4-Core CPU Hardware Node",
+    "physical_cores": 4,
+    "execution_threads": 8,
     "memory_budget_mb": 10240,
     "acceleration": "SIMD AVX-512 (torch.set_num_threads=8)",
     "gpu_usage": "0% (Zero GPU Required)"

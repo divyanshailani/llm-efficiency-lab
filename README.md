@@ -8,7 +8,7 @@ We use a strict 3-tier testing pipeline to evaluate models before they ever touc
 
 ### Tier 1: Local Apple Silicon & Dedicated CPU Nodes
 Our controlled research baseline, utilizing memory bandwidth and multi-core SIMD execution to measure prompt-processing throughput and decode speeds.
-* **`Liquid AI LFM2.5`:** Hybrid 22 Double-Gated Short-Conv + 8 GQA Attention layers ($O(1)$ constant memory complexity on 8 CPU cores).
+* **`Liquid AI LFM2.5`:** Hybrid 22 Double-Gated Short-Conv + 8 GQA Attention layers ($O(1)$ constant memory complexity on a 4-Core CPU Node / 8 execution threads).
 * **`llama.cpp` + Metal:** The GGUF standard baseline.
 * **`mlx-lm`:** Clean MLX-native single-request benchmarks.
 * **`oMLX`:** Serving overhead, persistent KV caching, concurrency, and SSD-cache experiments.
@@ -24,7 +24,7 @@ Once the optimal configurations are mapped on Tiers 1 and 2, we selectively depl
 
 We organize evaluations into strict **device-and-hardware-centric** directories paired with exact reproduction scripts, sanitized results, and documentation:
 
-* [`devices_and_hardware/cpu_8core_liquid_lfm2.5_2.6b/`](./devices_and_hardware/cpu_8core_liquid_lfm2.5_2.6b/README.md): 8-Core CPU benchmark for Liquid AI LFM2.5 (100% 11/11 Master Gates, $O(1)$ memory).
+* [`devices_and_hardware/cpu_4core_liquid_lfm2.5_2.6b/`](./devices_and_hardware/cpu_4core_liquid_lfm2.5_2.6b/README.md): 4-Core (8-Thread) CPU benchmark for Liquid AI LFM2.5 (100% 11/11 Master Gates, $O(1)$ memory).
 * [`devices_and_hardware/mac_mini_m4_qwythos_9b/`](./devices_and_hardware/mac_mini_m4_qwythos_9b/README.md): M4 baseline scripts, JSON results, and benchmark guides.
 * [`devices_and_hardware/rtx_pro_6000_ornith_35b_nvfp4/`](./devices_and_hardware/rtx_pro_6000_ornith_35b_nvfp4/README.md): Blackwell NVFP4 35B MoE testing (~200 tok/s).
 * [`devices_and_hardware/samsung_f23_5g_qwen2.5_3b/`](./devices_and_hardware/samsung_f23_5g_qwen2.5_3b/README.md): Physical edge testing scripts, Termux setups, and Context Cliff metrics.

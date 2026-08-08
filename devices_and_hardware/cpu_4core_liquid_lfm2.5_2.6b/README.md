@@ -1,6 +1,6 @@
-# 8-Core CPU Node — Liquid AI LFM2.5 2.6B Benchmark & Architecture Suite
+# 4-Core (8-Thread) CPU Node — Liquid AI LFM2.5 2.6B Benchmark & Architecture Suite
 
-This directory contains the public, generic hardware-paired benchmarking suite, context scaling sweeps, 6-gate survival quality benchmark, and 5-gate reasoning eval for **`LiquidAI/LFM2.5-2.6B`** running on an **8-Core CPU Node (Zero GPU)** with AVX-512 SIMD vectorization.
+This directory contains the public, generic hardware-paired benchmarking suite, context scaling sweeps, 6-gate survival quality benchmark, and 5-gate reasoning eval for **`LiquidAI/LFM2.5-2.6B`** running on a **4-Core CPU Node (8 Execution Threads, Zero GPU)** with AVX-512 SIMD vectorization.
 
 ---
 
@@ -16,9 +16,9 @@ This directory contains the public, generic hardware-paired benchmarking suite, 
 
 ---
 
-## ⚡ Performance Summary (8 Cores, Zero GPU)
+## ⚡ Performance Summary (4 Physical Cores / 8 Threads, Zero GPU)
 
-- **Peak Generation/Decode Speed (bfloat16)**: **8.37 tokens/sec** on 8 CPU cores
+- **Peak Generation/Decode Speed (bfloat16)**: **8.37 tokens/sec** on 4 CPU cores (8 threads)
 - **Estimated Generation Speed (GGUF Q4_K_M)**: **~65.0 – 85.0+ tokens/sec** with native AVX-512 C++ kernels
 - **Peak RAM Consumption**: **8,730.0 MB** (~8.52 GB RSS, zero memory leakage across repeated passes)
 - **Cold-Start Weight Load Time**: **5.27s** (via persistent cached volume)
@@ -30,7 +30,7 @@ This directory contains the public, generic hardware-paired benchmarking suite, 
 
 ## 📊 1. Context Speed Sweep Benchmark Results
 
-Evaluated on **8-Core CPU Hardware Node** using multi-threaded PyTorch AVX-512 vectorization (`torch.set_num_threads(8)`).
+Evaluated on **4-Core CPU Hardware Node (8 execution threads)** using multi-threaded PyTorch AVX-512 vectorization (`torch.set_num_threads(8)`).
 
 | Context Length | TTFT (s) | Ingestion Speed (t/s) | Generation / Decode Speed (t/s) | E2E Time (150 tokens) | Peak RAM RSS |
 |---|---|---|---|---|---|
@@ -68,7 +68,7 @@ Evaluated on **8-Core CPU Hardware Node** using multi-threaded PyTorch AVX-512 v
 | **1** | **Algorithmic Logic Deduction** | ✅ **PASSED** | 2.84 s | 150 | Solved weighted interval scheduling optimization, correctly choosing Task A + Task C for profit `120` |
 | **2** | **Boundary Value Edge Recovery** | ✅ **PASSED** | 2.15 s | 150 | Pinpointed infinite loop and off-by-one boundary failure in binary search (`low = mid` vs `low = mid + 1`) |
 | **3** | **Adversarial Defense & Bounds** | ✅ **PASSED** | 1.82 s | 120 | Explicitly rejected $O(1)$ comparison sorting by citing $\Omega(N \log N)$ decision tree information-theoretic limits |
-| **4** | **Zero-Hallucination Tool Typing** | ✅ **PASSED** | 1.45 s | 80 | Accurately populated typed parameter fields (`cpu_cores=8`, `memory_gb=16`, `region='us-east-1'`) |
+| **4** | **Zero-Hallucination Tool Typing** | ✅ **PASSED** | 1.45 s | 80 | Accurately populated typed parameter fields (`cpu_cores=4`, `memory_gb=16`, `region='us-east-1'`) |
 | **5** | **Structured `<think>` Trace Audit** | ✅ **PASSED** | 1.98 s | 100 | Successfully audited $9.9 > 9.11$ with step-by-step place-value reasoning (`9.90 > 9.11`) |
 
 ---
@@ -167,7 +167,7 @@ To test any CPU node using standard OpenAI-compatible endpoints:
 
 ```bash
 # 1. Run inference benchmark
-python3 devices_and_hardware/cpu_8core_liquid_lfm2.5_2.6b/scripts/test_cpu_server.py \
+python3 devices_and_hardware/cpu_4core_liquid_lfm2.5_2.6b/scripts/test_cpu_server.py \
   --endpoint "http://localhost:8000/v1" \
   --prompt "Explain why short convolutions have O(1) constant memory complexity." \
   --max-tokens 150
@@ -193,7 +193,7 @@ curl -X POST "http://localhost:8000/v1/chat/completions" \
 
 ## 📁 Directory Structure
 ```
-cpu_8core_liquid_lfm2.5_2.6b/
+cpu_4core_liquid_lfm2.5_2.6b/
 ├── README.md
 ├── scripts/
 │   └── test_cpu_server.py
