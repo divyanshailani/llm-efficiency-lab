@@ -43,42 +43,19 @@ Evaluated on **8 Physical Cores / 16 Execution Threads** using `llama.cpp` AVX-5
 
 ---
 
-### Reproducible llama.cpp Optimization Harness
+### llama.cpp Optimization Sweep (Q8_0 — 8-Core / 16-Thread CPU Node)
 
-The repository also contains a `llama-bench` harness for comparing runtime
-settings on a 16-thread CPU environment:
+A `llama-bench` harness was used to compare runtime settings on the 16-thread
+CPU environment. The harness builds `llama.cpp` with `GGML_NATIVE=OFF` and
+OpenMP enabled — the portable build is intentional because native instruction
+selection (AMX/AVX-512 intrinsics) was not portable across the tested CPU
+environment.
 
-```text
-lfm 2.5 test/deploy_lfm_q8_llama_bench.py
-lfm 2.5 test/deploy_lfm_q8_sweep.py
-```
-
-The harness builds `llama.cpp` with `GGML_NATIVE=OFF` and OpenMP enabled. The
-portable build is intentional because native instruction selection was not
-portable across the tested CPU environment. The model is
-`LiquidAI/LFM2.5-2.6B-GGUF/LFM2.5-2.6B-Q8_0.gguf`, and the
-short validation workload uses prompt lengths `128,512`, eight generated
-tokens, and one repetition per case.
-
-The sweep changes one runtime knob at a time while holding the model, CPU
-allocation, prompt workload, and repetition count constant:
-
-| Variant | Changed setting |
-|---|---|
-| `t16_b512_fa0` | Reference configuration |
-| `t16_b128_fa0` | Batch size `128` |
-| `t16_b256_fa0` | Batch size `256` |
-| `t16_b1024_fa0` | Batch size `1024` |
-| `t16_b512_fa1` | Flash Attention `on` |
-| `t16_b512_fa0_explicit` | Flash Attention `off` explicitly |
-| `t16_b512_fa0_nommap` | Memory mapping disabled |
-| `t16_b512_q8kv` | K/V cache types `q8_0` |
-| `t8_b512_fa0` | Thread override `8` |
-
-The completed smoke-scale measurements are checked in at
-`results/llama_cpp_q8_optimization_sweep.json`. They use one repetition per
-variant, so small differences require repeated runs before being treated as
-confirmed optimizations.
+The model is `LiquidAI/LFM2.5-2.6B-GGUF/LFM2.5-2.6B-Q8_0.gguf`. The short
+validation workload uses prompt lengths `128,512`, eight generated tokens, and
+one repetition per case. The sweep changes one runtime knob at a time while
+holding the model, CPU allocation, prompt workload, and repetition count
+constant:
 
 | Variant | Changed setting | Prefill pp (t/s) | Decode tg (t/s) | Change vs reference |
 |---|---|---:|---:|---:|
@@ -95,11 +72,9 @@ confirmed optimizations.
 The strongest single-run prefill result was the Q8 K/V cache variant (+1.08%).
 The strongest single-run decode result disabled memory mapping (+7.09%). Batch
 size and Flash Attention were near the reference result, while reducing the
-thread count materially reduced decode throughput. No quantization comparison
-against Q4_K_M was included in this sweep.
+thread count materially reduced decode throughput.
 
-The scripts are intentionally tracked while model weights, caches, local
-virtual environments, and generated benchmark directories remain ignored.
+> 📁 Telemetry saved: `results/llama_cpp_q8_optimization_sweep.json`
 
 ---
 
@@ -208,5 +183,6 @@ cpu_4core_liquid_lfm2.5_2.6b/
 │   └── test_cpu_server.py
 └── results/
     ├── cpu_lfm2.5_benchmark_results.json
-    └── cpu_lfm2.5_q8_benchmark_results.json
+    ├── cpu_lfm2.5_q8_benchmark_results.json
+    └── llama_cpp_q8_optimization_sweep.json
 ```
