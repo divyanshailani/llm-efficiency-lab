@@ -43,6 +43,61 @@ Evaluated on **8 Physical Cores / 16 Execution Threads** using `llama.cpp` AVX-5
 
 ---
 
+### Reproducible llama.cpp Optimization Harness
+
+The repository also contains a Modal-based `llama-bench` harness for comparing
+runtime settings on a 16-vCPU CPU container:
+
+```text
+lfm 2.5 test/deploy_lfm_q8_llama_bench.py
+lfm 2.5 test/deploy_lfm_q8_sweep.py
+```
+
+The harness builds `llama.cpp` with `GGML_NATIVE=OFF` and OpenMP enabled. The
+portable build is intentional: enabling native instruction selection on the
+tested Modal CPU caused an illegal-instruction failure during the initial
+probe. The model is `LiquidAI/LFM2.5-2.6B-GGUF/LFM2.5-2.6B-Q8_0.gguf`, and the
+short validation workload uses prompt lengths `128,512`, eight generated
+tokens, and one repetition per case.
+
+The sweep changes one runtime knob at a time while holding the model, CPU
+allocation, prompt workload, and repetition count constant:
+
+| Variant | Changed setting |
+|---|---|
+| `t16_b512_fa0` | Reference configuration |
+| `t16_b128_fa0` | Batch size `128` |
+| `t16_b256_fa0` | Batch size `256` |
+| `t16_b1024_fa0` | Batch size `1024` |
+| `t16_b512_fa1` | Flash Attention `on` |
+| `t16_b512_fa0_explicit` | Flash Attention `off` explicitly |
+| `t16_b512_fa0_nommap` | Memory mapping disabled |
+| `t16_b512_q8kv` | K/V cache types `q8_0` |
+| `t8_b512_fa0` | Thread override `8` |
+
+The harness was executed successfully on Modal after correcting the command
+syntax for the installed `llama-bench` version. The portable reference probe
+reported approximately `44.65 tokens/s` for the 512-token prompt-prefill case;
+the completed run also recorded `14.55 tokens/s` for the eight-thread,
+eight-token decode case. These are smoke-scale validation measurements, not a
+replacement for the longer context sweep above. The raw JSON emitted by
+`llama-bench` remains in the Modal run output rather than being presented here
+as a fabricated checked-in result file.
+
+To reproduce the remote run, authenticate with Modal using the `agent-work`
+profile and run:
+
+```bash
+modal profile activate agent-work
+modal run "lfm 2.5 test/deploy_lfm_q8_llama_bench.py"
+modal run "lfm 2.5 test/deploy_lfm_q8_sweep.py"
+```
+
+The scripts are intentionally tracked while model weights, caches, local
+virtual environments, and generated benchmark directories remain ignored.
+
+---
+
 ### B. 4-Core (8-Thread) CPU Node — Native `bfloat16`
 Evaluated on **4 Physical Cores / 8 Execution Threads** using multi-threaded PyTorch AVX-512 vectorization (`torch.set_num_threads(8)`).
 

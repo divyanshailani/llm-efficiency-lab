@@ -22,3 +22,6 @@ original_swarm_files_backup/
 
 # Personal local runner scripts & live secrets isolation
 lfm 2.5 test/
+!lfm 2.5 test/
+!lfm 2.5 test/deploy_lfm_q8_llama_bench.py
+!lfm 2.5 test/deploy_lfm_q8_sweep.py
