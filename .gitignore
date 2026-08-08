@@ -18,5 +18,9 @@ hf_venv/
 Notes/
 
 .original_swarm_files/
-
 original_swarm_files_backup/
+
+# Personal local runner scripts & live secrets isolation
+deploy_lfm_modal.py
+benchmark_lfm_survival.py
+lfm_benchmark_results.json

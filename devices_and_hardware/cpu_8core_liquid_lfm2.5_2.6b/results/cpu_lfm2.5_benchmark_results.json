@@ -1,0 +1,93 @@
+{
+  "hardware_configuration": {
+    "device": "Serverless CPU Node (8.0 vCPUs)",
+    "allocated_cores": 8,
+    "memory_budget_mb": 10240,
+    "acceleration": "SIMD AVX-512 (torch.set_num_threads=8)",
+    "gpu_usage": "0% (Zero GPU Required)"
+  },
+  "model_details": {
+    "model_name": "LiquidAI/LFM2.5-2.6B",
+    "parameters": "2.69B",
+    "architecture": "Hybrid Short Convolution + GQA Attention",
+    "total_layers": 30,
+    "short_conv_layers": 22,
+    "attention_layers": 8,
+    "context_window": 131072,
+    "precision": "bfloat16"
+  },
+  "hardware_metrics": {
+    "prompt_tokens": 45,
+    "generated_tokens": 150,
+    "tokens_per_second_bfloat16": 6.74,
+    "estimated_tokens_per_second_gguf_q4km": 65.0,
+    "latency_seconds": 22.24,
+    "peak_ram_rss_mb": 8730.0,
+    "total_roundtrip_sec": 24.85
+  },
+  "survival_gates_6_of_6": {
+    "gate1_needle_in_haystack": {
+      "passed": true,
+      "score": "100%",
+      "description": "Exact retrieval of target secret token amidst dense distributed background context."
+    },
+    "gate2_multi_turn_state_tracking": {
+      "passed": true,
+      "score": "100%",
+      "description": "Sequential 3-action state dictionary mutation with score tracking and status update."
+    },
+    "gate3_python_ast_code_synthesis": {
+      "passed": true,
+      "score": "100%",
+      "description": "Valid topological sort algorithm generation on directed graph edges."
+    },
+    "gate4_strict_schema_json": {
+      "passed": true,
+      "score": "100%",
+      "description": "Conforms strictly to typed JSON schema for server telemetry reporting."
+    },
+    "gate5_short_conv_ram_stability": {
+      "passed": true,
+      "score": "100%",
+      "ram_rss_mb": 8730.0,
+      "description": "O(1) constant memory scaling with zero memory leaks across sustained decode cycles."
+    },
+    "gate6_agentic_tool_calling": {
+      "passed": true,
+      "score": "100%",
+      "description": "Pythonic function dispatch conforming to native tool signature."
+    }
+  },
+  "reasoning_gates_5_of_5": {
+    "gate1_algorithmic_logic_deduction": {
+      "passed": true,
+      "score": "100%",
+      "description": "Solved interval scheduling optimization problem with profit 120."
+    },
+    "gate2_boundary_value_edge_recovery": {
+      "passed": true,
+      "score": "100%",
+      "description": "Detected off-by-one and infinite loop in broken binary search implementation."
+    },
+    "gate3_adversarial_defense": {
+      "passed": true,
+      "score": "100%",
+      "description": "Rejected O(1) comparison sort claim by citing Omega(N log N) decision tree lower bounds."
+    },
+    "gate4_tool_parameter_typing": {
+      "passed": true,
+      "score": "100%",
+      "description": "Accurately populated typed parameter fields without hallucinating schema properties."
+    },
+    "gate5_structured_think_trace_audit": {
+      "passed": true,
+      "score": "100%",
+      "description": "Correctly evaluated 9.9 > 9.11 with explicit internal chain-of-thought verification."
+    }
+  },
+  "overall_scorecard": {
+    "survival_benchmark_pass_rate": "6/6 (100.0%)",
+    "reasoning_eval_pass_rate": "5/5 (100.0%)",
+    "master_score": "11/11 (100.0%)"
+  }
+}
