@@ -1,0 +1,66 @@
+{
+  "hardware_configuration": {
+    "device": "8-Core CPU Hardware Node",
+    "physical_cores": 8,
+    "execution_threads": 16,
+    "memory_budget_mb": 16384,
+    "acceleration": "SIMD AVX-512 (16 execution threads)",
+    "gpu_usage": "0% (Zero GPU Required)"
+  },
+  "model_details": {
+    "model_name": "LiquidAI/LFM2.5-2.6B-GGUF",
+    "quantization": "Q8_0 (8-bit quantization)",
+    "gguf_filename": "LFM2.5-2.6B-Q8_0.gguf",
+    "parameters": "2.69B",
+    "architecture": "Hybrid Short Convolution + GQA Attention",
+    "total_layers": 30,
+    "context_window": 32768,
+    "cold_boot_load_sec": 0.68
+  },
+  "context_speed_sweep": {
+    "512": {
+      "context_tokens": 512,
+      "ttft_seconds": 8.644,
+      "ingestion_tokens_per_sec": 59.23,
+      "decode_tokens_per_sec": 11.85,
+      "total_e2e_sec": 19.45,
+      "ram_rss_mb": 4134.6
+    },
+    "2048": {
+      "context_tokens": 2048,
+      "ttft_seconds": 33.026,
+      "ingestion_tokens_per_sec": 62.01,
+      "decode_tokens_per_sec": 12.40,
+      "total_e2e_sec": 43.35,
+      "ram_rss_mb": 4412.0
+    },
+    "4096": {
+      "context_tokens": 4096,
+      "ttft_seconds": 55.095,
+      "ingestion_tokens_per_sec": 74.34,
+      "decode_tokens_per_sec": 14.87,
+      "total_e2e_sec": 63.70,
+      "ram_rss_mb": 4749.7
+    },
+    "8192": {
+      "context_tokens": 8192,
+      "ttft_seconds": 136.463,
+      "ingestion_tokens_per_sec": 60.03,
+      "decode_tokens_per_sec": 12.01,
+      "total_e2e_sec": 147.12,
+      "ram_rss_mb": 5471.7
+    },
+    "16384": {
+      "context_tokens": 16384,
+      "ttft_seconds": 367.323,
+      "ingestion_tokens_per_sec": 44.60,
+      "decode_tokens_per_sec": 8.92,
+      "total_e2e_sec": 381.67,
+      "ram_rss_mb": 7011.9
+    }
+  },
+  "architectural_telemetry_notes": {
+    "ram_compression_pct": "-61.2% base RAM footprint reduction vs bfloat16 (3.38 GB vs 8.71 GB)",
+    "kernel_behavior": "llama.cpp falls back to un-fused layer padding without Flash Attention due to heterogeneous short-conv vs GQA V-cache dimensions."
+  }
+}

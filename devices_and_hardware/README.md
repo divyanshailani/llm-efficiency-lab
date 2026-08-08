@@ -7,10 +7,10 @@ Every evaluation in this repository is organized into a dedicated, self-containe
 ## 📁 Hardware & Model Directory Sitemap
 
 ### 1. ⚡ [cpu_4core_liquid_lfm2.5_2.6b](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/cpu_4core_liquid_lfm2.5_2.6b/README.md)
-- **Hardware**: 4-Core CPU Hardware Node (8 Execution Threads, AVX-512 SIMD, 8–10GB RAM, Zero GPU)
-- **Model**: Liquid AI LFM2.5 2.6B (Hybrid 22 Double-Gated Short-Conv + 8 GQA Attention)
-- **Runtime**: PyTorch 2.4+ CPU SIMD / Native AVX-512
-- **Key Finding**: **100% 11/11 Master Gate Score** (6/6 Survival + 5/5 Reasoning). Short convolutions operate with **$O(1)$ constant memory complexity**, completely eliminating KV-cache DDR5 bandwidth bottlenecks on CPU.
+- **Hardware**: Dedicated CPU Hardware Nodes (4 Cores / 8 Threads & 8 Cores / 16 Threads, AVX-512 SIMD, 8–16GB RAM, Zero GPU)
+- **Model**: Liquid AI LFM2.5 2.6B (Native `bfloat16` & `Q8_0` GGUF)
+- **Runtimes**: PyTorch 2.4+ CPU SIMD & `llama.cpp` AVX-512
+- **Key Finding**: **100% 11/11 Master Gate Score**; `Q8_0` delivers **$-61.2\%$ RAM reduction** (3.38 GB base RSS) and accelerates decode to **14.87 t/s**.
 
 ### 2. 📱 [samsung_f23_5g_qwen2.5_3b](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/samsung_f23_5g_qwen2.5_3b/README.md)
 - **Hardware**: Samsung Galaxy F23 5G (Snapdragon 750G, 6GB Shared System RAM)
