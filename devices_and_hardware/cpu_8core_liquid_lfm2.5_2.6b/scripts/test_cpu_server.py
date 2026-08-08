@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-Liquid AI LFM2.5-2.6B 8-vCPU Generic Tester Script
-Evaluates hardware throughput, latency, and reasoning on any serverless CPU or local node.
+Liquid AI LFM2.5-2.6B 8-Core CPU Node Generic Tester Script
+Evaluates hardware throughput, latency, and reasoning on any 8-core CPU hardware node.
 
 Usage:
     python3 test_cpu_server.py --endpoint http://localhost:8000/v1
-    python3 test_cpu_server.py --endpoint https://your-endpoint.modal.run/v1
 """
 
 import argparse

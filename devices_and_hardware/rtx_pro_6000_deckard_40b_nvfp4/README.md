@@ -1,6 +1,6 @@
 # Qwen3.6 Deckard 40B NVFP4 — NVIDIA RTX PRO 6000 Blackwell Benchmark
 
-This directory contains the empirical evaluation, footprint audit, and speed benchmark for the **Qwen3.6 Deckard 40B NVFP4 (W4A4)** model deployed on an **NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)** serverless node.
+This directory contains the empirical evaluation, footprint audit, and speed benchmark for the **Qwen3.6 Deckard 40B NVFP4 (W4A4)** model deployed on an **NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)** hardware node.
 
 ## Hardware Configuration
 - **GPU:** NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)

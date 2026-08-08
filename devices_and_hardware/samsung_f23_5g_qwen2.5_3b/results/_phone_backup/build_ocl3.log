@@ -1,0 +1,24 @@
+[  0%] Built target llama-common-base
+[  2%] Built target ggml-base
+[  2%] Built target cpp-httplib
+[  2%] Building CXX object ggml/src/ggml-opencl/CMakeFiles/ggml-opencl.dir/ggml-opencl.cpp.o
+[  6%] Built target ggml-cpu
+/data/data/com.termux/files/home/llama.cpp/ggml/src/ggml-opencl/ggml-opencl.cpp:1251:66: warning: unused parameter 'backend_ctx' [-Wunused-parameter]
+ 1251 | static bool use_adreno_bin_kernels(ggml_backend_opencl_context * backend_ctx) {
+      |                                                                  ^
+/data/data/com.termux/files/home/llama.cpp/ggml/src/ggml-opencl/ggml-opencl.cpp:7093:9: warning: TODO: implement BF16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0, IQ4_NL support (https://github.com/ggml-org/llama.cpp/pull/14661) [-W#pragma-messages]
+ 7093 | #pragma message("TODO: implement BF16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0, IQ4_NL support (https://github.com/ggml-org/llama.cpp/pull/14661)")
+      |         ^
+2 warnings generated.
+[  7%] Linking CXX shared library ../../../bin/libggml-opencl.so
+[ 49%] Built target ggml-opencl
+[ 49%] Linking CXX shared library ../../bin/libggml.so
+[ 49%] Built target ggml
+[ 50%] Linking CXX shared library ../bin/libllama.so
+[ 90%] Built target llama
+[ 90%] Linking CXX shared library ../bin/libllama-common.so
+[ 98%] Built target llama-common
+[ 98%] Linking CXX shared library ../../bin/libllama-bench-impl.so
+[100%] Built target llama-bench-impl
+[100%] Linking CXX executable ../../bin/llama-bench
+[100%] Built target llama-bench

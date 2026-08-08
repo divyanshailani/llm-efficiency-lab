@@ -1,6 +1,6 @@
-# Serverless 8-Core CPU — Liquid AI LFM2.5 2.6B Benchmark & Architecture Suite
+# 8-Core CPU Node — Liquid AI LFM2.5 2.6B Benchmark & Architecture Suite
 
-This directory contains the public, generic hardware-paired benchmarking suite, context scaling sweeps, 6-gate survival quality benchmark, and 5-gate reasoning eval for **`LiquidAI/LFM2.5-2.6B`** running on an **8.0 vCPU Serverless Node (Zero GPU!)** with AVX-512 SIMD vectorization.
+This directory contains the public, generic hardware-paired benchmarking suite, context scaling sweeps, 6-gate survival quality benchmark, and 5-gate reasoning eval for **`LiquidAI/LFM2.5-2.6B`** running on an **8-Core CPU Node (Zero GPU)** with AVX-512 SIMD vectorization.
 
 ---
 
@@ -16,7 +16,7 @@ This directory contains the public, generic hardware-paired benchmarking suite, 
 
 ---
 
-## ⚡ Performance Summary (8 vCPUs, Zero GPU)
+## ⚡ Performance Summary (8 Cores, Zero GPU)
 
 - **Peak Generation/Decode Speed (bfloat16)**: **8.37 tokens/sec** on 8 CPU cores
 - **Estimated Generation Speed (GGUF Q4_K_M)**: **~65.0 – 85.0+ tokens/sec** with native AVX-512 C++ kernels
@@ -30,7 +30,7 @@ This directory contains the public, generic hardware-paired benchmarking suite, 
 
 ## 📊 1. Context Speed Sweep Benchmark Results
 
-Evaluated on **8.0 vCPU Serverless Node** using multi-threaded PyTorch AVX-512 vectorization (`torch.set_num_threads(8)`).
+Evaluated on **8-Core CPU Hardware Node** using multi-threaded PyTorch AVX-512 vectorization (`torch.set_num_threads(8)`).
 
 | Context Length | TTFT (s) | Ingestion Speed (t/s) | Generation / Decode Speed (t/s) | E2E Time (150 tokens) | Peak RAM RSS |
 |---|---|---|---|---|---|
@@ -50,7 +50,7 @@ Evaluated on **8.0 vCPU Serverless Node** using multi-threaded PyTorch AVX-512 v
 
 | Gate | Description | Status | Response Summary & Telemetry |
 |---|---|:---:|---|
-| **Gate 1** | **Needle In A Haystack (NIAH)** | ✅ **PASSED** | 100% exact retrieval of `SECRET_OMEGA_KEY_7749` amidst 4K tokens of repetitive cloud scheduling noise |
+| **Gate 1** | **Needle In A Haystack (NIAH)** | ✅ **PASSED** | 100% exact retrieval of `SECRET_OMEGA_KEY_7749` amidst 4K tokens of repetitive background system noise |
 | **Gate 2** | **Multi-Turn State Tracking** | ✅ **PASSED** | Correctly executed 3-step sequential state mutation: updated status `VERIFIED`, calculated score `100`, assigned tier `GOLD` |
 | **Gate 3** | **Python AST Code Synthesis** | ✅ **PASSED** | Synthesized valid, bug-free `topological_sort(num_nodes, edges)` with cycle detection using Kahn's algorithm |
 | **Gate 4** | **Strict Schema JSON Conformance** | ✅ **PASSED** | Emitted 100% valid JSON payload strictly matching `server_id`, `cpu_pct`, `healthy`, and `services` schema |
@@ -163,7 +163,7 @@ This allows CPU execution pipelines to stream short-convolution operations direc
 
 ## 🛠️ Public Reproduction & Testing Guide
 
-To test any deployed CPU node using OpenAI-compatible endpoints:
+To test any CPU node using standard OpenAI-compatible endpoints:
 
 ```bash
 # 1. Run inference benchmark

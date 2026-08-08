@@ -7,7 +7,7 @@ Every evaluation in this repository is organized into a dedicated, self-containe
 ## 📁 Hardware & Model Directory Sitemap
 
 ### 1. ⚡ [cpu_8core_liquid_lfm2.5_2.6b](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/cpu_8core_liquid_lfm2.5_2.6b/README.md)
-- **Hardware**: Serverless CPU Node (8.0 vCPUs, AVX-512 SIMD, 8–10GB RAM, Zero GPU)
+- **Hardware**: 8-Core CPU Hardware Node (8.0 vCPUs, AVX-512 SIMD, 8–10GB RAM, Zero GPU)
 - **Model**: Liquid AI LFM2.5 2.6B (Hybrid 22 Double-Gated Short-Conv + 8 GQA Attention)
 - **Runtime**: PyTorch 2.4+ CPU SIMD / Native AVX-512
 - **Key Finding**: **100% 11/11 Master Gate Score** (6/6 Survival + 5/5 Reasoning). Short convolutions operate with **$O(1)$ constant memory complexity**, completely eliminating KV-cache DDR5 bandwidth bottlenecks on CPU.
@@ -51,4 +51,4 @@ Every evaluation in this repository is organized into a dedicated, self-containe
 ### 8. ⚡ [a100_16gb_baseline](file:///Users/divyanshailani/Desktop/llm%20experiments/devices_and_hardware/a100_16gb_baseline/README.md)
 - **Hardware**: NVIDIA A100 Tensor Core GPU (16GB VRAM Slice)
 - **Model**: Baseline 7B/14B models
-- **Runtime**: vLLM serverless endpoint
+- **Runtime**: vLLM endpoint

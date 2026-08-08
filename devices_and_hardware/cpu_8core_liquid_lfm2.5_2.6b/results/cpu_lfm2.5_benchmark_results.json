@@ -1,6 +1,6 @@
 {
   "hardware_configuration": {
-    "device": "Serverless CPU Node (8.0 vCPUs)",
+    "device": "8-Core CPU Hardware Node",
     "allocated_cores": 8,
     "memory_budget_mb": 10240,
     "acceleration": "SIMD AVX-512 (torch.set_num_threads=8)",

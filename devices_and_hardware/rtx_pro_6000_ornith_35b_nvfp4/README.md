@@ -1,6 +1,6 @@
 # Ornith 1.0 35B NVFP4 MoE — NVIDIA RTX PRO 6000 Blackwell Benchmark
 
-This directory contains the empirical evaluation, speed sweep, and 6-gate survival quality benchmark for **`sakamakismile/Ornith-1.0-35B-NVFP4`** (True NVFP4 W4A4 Mixture-of-Experts) deployed on an **NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)** serverless node.
+This directory contains the empirical evaluation, speed sweep, and 6-gate survival quality benchmark for **`sakamakismile/Ornith-1.0-35B-NVFP4`** (True NVFP4 W4A4 Mixture-of-Experts) deployed on an **NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)** hardware node.
 
 ## Hardware Configuration
 - **GPU:** NVIDIA RTX PRO 6000 Blackwell (96GB VRAM)

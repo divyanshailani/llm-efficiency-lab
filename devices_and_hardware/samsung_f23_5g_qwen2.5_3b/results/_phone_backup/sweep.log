@@ -1,0 +1,20 @@
+[1/8] threads=2 fa=0 (cpu=49.9C gpu=48.0C avail=3107MB)
+    rc=0 prefill=11.11 decode=5.5 ttft=11521.2ms peakRAM=4152MB peakCPU=74.8C
+[2/8] threads=4 fa=0 (cpu=49.9C gpu=48.0C avail=3033MB)
+    rc=0 prefill=13.78 decode=4.92 ttft=9288.8ms peakRAM=4005MB peakCPU=80.3C
+[3/8] threads=6 fa=0 (cpu=50.6C gpu=49.3C avail=3294MB)
+    rc=0 prefill=15.73 decode=5.08 ttft=8137.3ms peakRAM=4064MB peakCPU=82.2C
+[4/8] threads=8 fa=0 (cpu=52.5C gpu=50.3C avail=3262MB)
+    rc=0 prefill=17.48 decode=4.71 ttft=7322.7ms peakRAM=3851MB peakCPU=82.5C
+[5/8] threads=2 fa=1 (cpu=54.8C gpu=51.9C avail=3362MB)
+    rc=0 prefill=10.15 decode=5.36 ttft=12610.8ms peakRAM=3817MB peakCPU=70.9C
+[6/8] threads=4 fa=1 (cpu=51.9C gpu=49.6C avail=3491MB)
+    rc=0 prefill=11.78 decode=5.05 ttft=10865.9ms peakRAM=3843MB peakCPU=79.6C
+[7/8] threads=6 fa=1 (cpu=52.8C gpu=50.3C avail=3446MB)
+    rc=0 prefill=14.65 decode=5.22 ttft=8737.2ms peakRAM=4075MB peakCPU=82.5C
+[8/8] threads=8 fa=1 (cpu=52.8C gpu=50.3C avail=3276MB)
+    rc=0 prefill=15.48 decode=4.72 ttft=8268.7ms peakRAM=3934MB peakCPU=82.5C
+
+Best decode : 5.5 t/s (threads=2, fa=0)
+Best prefill: 17.48 t/s (threads=8, fa=0)
+Wrote /data/data/com.termux/files/home/cpu_sweep.json

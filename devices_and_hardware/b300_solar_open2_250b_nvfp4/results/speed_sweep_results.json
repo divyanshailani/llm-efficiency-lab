@@ -1,0 +1,11 @@
+{
+  "device": "NVIDIA B300 (288GB VRAM)",
+  "model": "Upstage/Solar-Open2-250B-NVFP4",
+  "endpoint": "http://localhost:8000/v1",
+  "results": {
+    "512": {
+      "status": "pending_deployment",
+      "note": "Awaiting container weight deployment and FlashInfer compilation."
+    }
+  }
+}

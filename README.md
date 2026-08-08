@@ -1,12 +1,12 @@
 # LLM Inference Efficiency Lab
 
-Finding the best quality, memory, and speed trade-offs for quantized LLMs across Apple Silicon, Hosted GPUs, and Serverless CPU Architectures, followed by selective mobile validation.
+Finding the best quality, memory, and speed trade-offs for quantized LLMs across Apple Silicon, Hosted GPUs, and Dedicated CPU Architectures, followed by selective mobile validation.
 
 ## Architecture & Tiers
 
 We use a strict 3-tier testing pipeline to evaluate models before they ever touch physical edge hardware.
 
-### Tier 1: Local Apple Silicon & CPU Nodes
+### Tier 1: Local Apple Silicon & Dedicated CPU Nodes
 Our controlled research baseline, utilizing memory bandwidth and multi-core SIMD execution to measure prompt-processing throughput and decode speeds.
 * **`Liquid AI LFM2.5`:** Hybrid 22 Double-Gated Short-Conv + 8 GQA Attention layers ($O(1)$ constant memory complexity on 8 CPU cores).
 * **`llama.cpp` + Metal:** The GGUF standard baseline.
