@@ -21,12 +21,4 @@ Notes/
 original_swarm_files_backup/
 
 # Personal local runner scripts & live secrets isolation
-deploy_lfm_modal.py
-benchmark_lfm_survival.py
-lfm_benchmark_results.json
-deploy_lfm_q8_16vcpu.py
-deploy_lfm_q8_llama_bench.py
-bench_q8_clean.py
-results_q8_16vcpu.json
-bench_16vcpu_fast.py
-results_16vcpu_sweep.json
+lfm 2.5 test/
